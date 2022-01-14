@@ -5,7 +5,6 @@ using UnityEngine.TestTools;
 using System.IO;
 
 using Negi0109.AsepriteImporter;
-using Negi0109.AsepriteImporter.Types;
 
 namespace Tests
 {
@@ -20,7 +19,7 @@ namespace Tests
         {
             // Use the Assert class to test conditions
             var bytes = File.ReadAllBytes(currentPath + path);
-            var header = AsepriteHeaderType.Deserialize(bytes);
+            var header = Aseprite.Deserialize(bytes).header;
 
             Assert.That((int)header.magicNumber, Is.EqualTo(0xA5E0));
         }
@@ -29,12 +28,10 @@ namespace Tests
         public void ReadData()
         {
             var bytes = File.ReadAllBytes(currentPath + path);
-            var header = AsepriteHeaderType.Deserialize(bytes);
+            var header = Aseprite.Deserialize(bytes).header;
 
-            Assert.That((int)header.width, Is.EqualTo(3));
-            Assert.That((int)header.height, Is.EqualTo(4));
-            Assert.That((int)header.zero1, Is.EqualTo(0));
-            Assert.That((int)header.zero2, Is.EqualTo(0));
+            Assert.That(header.size.x, Is.EqualTo(3));
+            Assert.That(header.size.y, Is.EqualTo(4));
         }
     }
 }

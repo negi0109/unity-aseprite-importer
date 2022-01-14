@@ -1,8 +1,6 @@
 {
     "name": "Scripts",
-    "references": [
-        "GUID:fe67b0646cfdd46729adf3b889181935"
-    ],
+    "references": [],
     "includePlatforms": [
         "Editor"
     ],
