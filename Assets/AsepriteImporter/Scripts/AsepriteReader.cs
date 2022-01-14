@@ -7,9 +7,13 @@ namespace Negi0109.AsepriteImporter
 {
     public class AsepriteReader
     {
+        public long Position
+        {
+            get => reader.BaseStream.Position;
+            set => reader.BaseStream.Position = value;
+        }
+
         private BinaryReader reader;
-        public void OldVersionError()
-            => throw new System.Exception("Older versions of aseprite are not supported");
 
         public AsepriteReader(Stream stream)
         {
@@ -22,7 +26,6 @@ namespace Negi0109.AsepriteImporter
         public uint Dword() => reader.ReadUInt32();
         public int Long() => reader.ReadInt32();
         public string String() => reader.ReadChars(Word()).ToString();
-        public void Seek(int count) => reader.BaseStream.Seek((long)count, SeekOrigin.Current);
-
+        public void Seek(long count) => reader.BaseStream.Seek(count, SeekOrigin.Current);
     }
 }

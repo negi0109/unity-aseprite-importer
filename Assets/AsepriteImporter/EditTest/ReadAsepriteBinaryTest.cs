@@ -29,15 +29,23 @@ namespace Tests
             Assert.That(header.magicNumber, Is.EqualTo(0xA5E0));
             Assert.That(header.size.x, Is.EqualTo(3));
             Assert.That(header.size.y, Is.EqualTo(4));
+            Assert.That(header.frames, Is.EqualTo(1));
         }
 
         [Test]
-        public void AsepriteFrameHeader()
+        public void AsepriteFrame()
         {
-            var frameHeader = aseprite.frameHeader;
+            var frame = aseprite.frames[0];
 
-            Assert.That(frameHeader.magicNumber, Is.EqualTo(0xF1FA));
-            Assert.That(frameHeader.chunks, Is.Not.EqualTo(0xFFFF));
+            Assert.That(frame.magicNumber, Is.EqualTo(0xF1FA));
+            Assert.That(frame.chunkCount, Is.Not.EqualTo(0xFFFF));
+        }
+
+        [Test]
+        public void AsepriteChunks()
+        {
+            var frame = aseprite.frames[0];
+            Assert.That(frame.chunkTypes, Is.EqualTo(null));
         }
     }
 }

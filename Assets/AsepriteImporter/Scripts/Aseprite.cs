@@ -8,7 +8,7 @@ namespace Negi0109.AsepriteImporter
     public class Aseprite
     {
         public AsepriteHeader header;
-        public AsepriteFrameHeader frameHeader;
+        public AsepriteFrame[] frames;
 
         public static Aseprite Deserialize(byte[] bytes)
         {
@@ -22,9 +22,10 @@ namespace Negi0109.AsepriteImporter
             var reader = new AsepriteReader(stream);
 
             aseprite.header = AsepriteHeader.Deserialize(reader);
-            aseprite.frameHeader = AsepriteFrameHeader.Deserialize(reader);
+            aseprite.frames = new AsepriteFrame[aseprite.header.frames];
 
-            if (aseprite.frameHeader.chunks == 0) reader.OldVersionError();
+            for (int i = 0; i < aseprite.header.frames; i++)
+                aseprite.frames[i] = AsepriteFrame.Deserialize(reader);
 
             return aseprite;
         }
