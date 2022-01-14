@@ -8,6 +8,8 @@ namespace Negi0109.AsepriteImporter
     public class AsepriteReader
     {
         private BinaryReader reader;
+        public void OldVersionError()
+            => throw new System.Exception("Older versions of aseprite are not supported");
 
         public AsepriteReader(Stream stream)
         {
