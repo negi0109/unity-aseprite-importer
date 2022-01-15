@@ -13,7 +13,7 @@ namespace Negi0109.AsepriteImporter
         public ColorDepth colorDepth;
         public uint flags;
         public int speed;
-        public int paletteEntry;
+        public int transparentIndex;
         public int colorNumber;
         public Vector2Int pixelSize;
         public Vector2Int gridPosition;
@@ -34,7 +34,7 @@ namespace Negi0109.AsepriteImporter
             header.flags = reader.Dword();
             header.speed = reader.Word();
             reader.Seek(8);
-            header.paletteEntry = reader.Byte();
+            header.transparentIndex = reader.Byte();
             reader.Seek(3);
             header.colorNumber = reader.Word();
             header.pixelSize.x = reader.Byte();

@@ -33,6 +33,9 @@ namespace Negi0109.AsepriteImporter
             for (int i = 0; i < aseprite.header.frames; i++)
                 aseprite.frames[i] = AsepriteFrame.Deserialize(reader, aseprite);
 
+            if (aseprite.header.colorDepth == AsepriteHeader.ColorDepth.Indexed)
+                aseprite.palatte[aseprite.header.transparentIndex] = Color.clear;
+
             return aseprite;
         }
 
