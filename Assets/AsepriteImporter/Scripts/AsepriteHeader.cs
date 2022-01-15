@@ -10,7 +10,7 @@ namespace Negi0109.AsepriteImporter
         public int magicNumber;
         public int frames;
         public Vector2Int size;
-        public int colorDepth;
+        public ColorDepth colorDepth;
         public uint flags;
         public int speed;
         public int paletteEntry;
@@ -30,7 +30,7 @@ namespace Negi0109.AsepriteImporter
             header.frames = reader.Word();
             header.size.x = reader.Word();
             header.size.y = reader.Word();
-            header.colorDepth = reader.Word();
+            header.colorDepth = (ColorDepth)reader.Word();
             header.flags = reader.Dword();
             header.speed = reader.Word();
             reader.Seek(8);
@@ -46,6 +46,13 @@ namespace Negi0109.AsepriteImporter
             reader.Seek(84);
 
             return header;
+        }
+
+        public enum ColorDepth
+        {
+            RGBA = 32,
+            Grayscale = 16,
+            Indexed = 8,
         }
     }
 }

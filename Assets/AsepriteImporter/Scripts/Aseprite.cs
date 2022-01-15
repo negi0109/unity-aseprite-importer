@@ -25,7 +25,7 @@ namespace Negi0109.AsepriteImporter
             aseprite.frames = new AsepriteFrame[aseprite.header.frames];
 
             for (int i = 0; i < aseprite.header.frames; i++)
-                aseprite.frames[i] = AsepriteFrame.Deserialize(reader);
+                aseprite.frames[i] = AsepriteFrame.Deserialize(reader, aseprite);
 
             return aseprite;
         }

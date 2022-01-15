@@ -20,7 +20,7 @@ namespace Negi0109.AsepriteImporter
         public int chunkCount;
         public int[] chunkTypes;
 
-        public static AsepriteFrame Deserialize(AsepriteReader reader)
+        public static AsepriteFrame Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
             var frame = new AsepriteFrame();
 
@@ -45,6 +45,7 @@ namespace Negi0109.AsepriteImporter
                         // 現在未使用
                         break;
                     case ChunkType.Cel:
+                        var cel = Cel.Deserialize(reader, aseprite);
                         break;
                     default:
                         break;
@@ -55,6 +56,45 @@ namespace Negi0109.AsepriteImporter
 
             reader.Position = frameEnd;
             return frame;
+        }
+        public class Cel
+        {
+            Vector2Int position;
+            int opacity;
+            int type;
+            Vector2Int size;
+            AsepritePixel[] pixels;
+
+            public static Cel Deserialize(AsepriteReader reader, Aseprite aseprite)
+            {
+                var cel = new Cel();
+                cel.position.x = reader.Short();
+                cel.position.y = reader.Short();
+                cel.opacity = reader.Byte();
+                cel.type = reader.Word();
+
+                if (cel.type == 0)
+                {
+                    cel.position.x = reader.Word();
+                    cel.position.y = reader.Word();
+                    cel.pixels = cel.ToPixels(reader, cel.size, aseprite);
+                }
+
+                return cel;
+            }
+
+            public AsepritePixel[] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
+            {
+                var length = size.x * size.y;
+                var pixels = new AsepritePixel[length];
+
+                for (int i = 0; i < length; i++)
+                {
+                    pixels[i] = AsepritePixel.Deserialize(reader, aseprite);
+                }
+
+                return pixels;
+            }
         }
     }
 }
