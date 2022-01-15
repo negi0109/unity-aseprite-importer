@@ -68,7 +68,6 @@ namespace Negi0109.AsepriteImporter
                             // hasName
                             if (flags == 1) reader.String();
                             var color = new Color(r, g, b, a);
-                            Debug.Log($"{paletteIndex}: {color.ToString()}");
                             aseprite.palatte[paletteIndex] = color;
                         }
                         break;
