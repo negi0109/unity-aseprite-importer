@@ -50,6 +50,28 @@ namespace Negi0109.AsepriteImporter
                         frame.cels.Add(cel);
 
                         break;
+                    case ChunkType.Palette:
+                        Debug.Log("Palette");
+                        var size = reader.Dword();
+                        var first = (int)reader.Dword();
+                        var last = (int)reader.Dword();
+                        reader.Seek(8);
+
+                        for (int paletteIndex = first; paletteIndex <= last; paletteIndex++)
+                        {
+                            var flags = reader.Word();
+                            var r = reader.Byte() / 255f;
+                            var g = reader.Byte() / 255f;
+                            var b = reader.Byte() / 255f;
+                            var a = reader.Byte() / 255f;
+
+                            // hasName
+                            if (flags == 1) reader.String();
+                            var color = new Color(r, g, b, a);
+                            Debug.Log($"{paletteIndex}: {color.ToString()}");
+                            aseprite.palatte[paletteIndex] = color;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -80,7 +102,7 @@ namespace Negi0109.AsepriteImporter
                             && pos.y >= 0 && pos.y < aseprite.header.size.y)
                         {
                             var pixel = cel.pixels[celPos.x, celPos.y];
-                            tex.SetPixel(pos.x, aseprite.header.size.y - 1 - pos.y, pixel.color);
+                            tex.SetPixel(pos.x, aseprite.header.size.y - 1 - pos.y, pixel.GetColor(aseprite));
                         }
                     }
                 }

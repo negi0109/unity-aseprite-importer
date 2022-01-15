@@ -13,6 +13,7 @@ namespace Negi0109.AsepriteImporter
     {
         public AsepriteHeader header;
         public AsepriteFrame[] frames;
+        public Color[] palatte;
 
         public static Aseprite Deserialize(byte[] bytes)
         {
@@ -26,6 +27,7 @@ namespace Negi0109.AsepriteImporter
             var reader = new AsepriteReader(stream);
 
             aseprite.header = AsepriteHeader.Deserialize(reader);
+            aseprite.palatte = new Color[255];
             aseprite.frames = new AsepriteFrame[aseprite.header.frames];
 
             for (int i = 0; i < aseprite.header.frames; i++)
