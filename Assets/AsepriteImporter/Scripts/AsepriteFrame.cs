@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO.Compression;
 
 namespace Negi0109.AsepriteImporter
 {
@@ -56,17 +57,47 @@ namespace Negi0109.AsepriteImporter
                 reader.Position = chunkEnd;
             }
 
+            frame.cels.Sort((a, b) => a.layer.CompareTo(b.layer));
+
             reader.Position = frameEnd;
             return frame;
         }
+
+        public Texture2D GenerateTexture(Aseprite aseprite)
+        {
+            var tex = new Texture2D(aseprite.header.size.x, aseprite.header.size.y);
+
+            foreach (var cel in cels)
+            {
+                for (int x = 0; x < cel.size.x; x++)
+                {
+                    for (int y = 0; y < cel.size.y; y++)
+                    {
+                        var celPos = new Vector2Int(x, y);
+                        var pos = cel.position + celPos;
+
+                        if (pos.x >= 0 && pos.x < aseprite.header.size.x
+                            && pos.y >= 0 && pos.y < aseprite.header.size.y)
+                        {
+                            var pixel = cel.pixels[celPos.x, celPos.y];
+                            tex.SetPixel(pos.x, aseprite.header.size.y - 1 - pos.y, pixel.color);
+                        }
+                    }
+                }
+            }
+            tex.Apply();
+
+            return tex;
+        }
+
         public class Cel
         {
-            int layer;
-            Vector2Int position;
-            int opacity;
-            int type;
-            Vector2Int size;
-            AsepritePixel[] pixels;
+            public int layer;
+            public Vector2Int position;
+            public int opacity;
+            public int type;
+            public Vector2Int size;
+            public AsepritePixel[,] pixels;
 
             public static Cel Deserialize(AsepriteReader reader, Aseprite aseprite)
             {
@@ -76,26 +107,34 @@ namespace Negi0109.AsepriteImporter
                 cel.position.y = reader.Short();
                 cel.opacity = reader.Byte();
                 cel.type = reader.Word();
+                reader.Seek(7);
 
                 if (cel.type == 0)
                 {
-                    cel.position.x = reader.Word();
-                    cel.position.y = reader.Word();
+                    cel.size.x = reader.Word();
+                    cel.size.y = reader.Word();
                     cel.pixels = cel.ToPixels(reader, cel.size, aseprite);
+                }
+                else if (cel.type == 2)
+                {
+                    cel.size.x = reader.Word();
+                    cel.size.y = reader.Word();
+                    reader.Seek(2);
+
+                    var stream = new DeflateStream(reader.BaseStream, CompressionMode.Decompress);
+                    cel.pixels = cel.ToPixels(new AsepriteReader(stream), cel.size, aseprite);
                 }
 
                 return cel;
             }
 
-            public AsepritePixel[] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
+            public AsepritePixel[,] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
             {
-                var length = size.x * size.y;
-                var pixels = new AsepritePixel[length];
+                var pixels = new AsepritePixel[size.x, size.y];
 
-                for (int i = 0; i < length; i++)
-                {
-                    pixels[i] = AsepritePixel.Deserialize(reader, aseprite);
-                }
+                for (int y = 0; y < size.y; y++)
+                    for (int x = 0; x < size.x; x++)
+                        pixels[x, y] = AsepritePixel.Deserialize(reader, aseprite);
 
                 return pixels;
             }
