@@ -18,7 +18,7 @@ namespace Negi0109.AsepriteImporter
         public int magicNumber;
         public int duration;
         public int chunkCount;
-        public int[] chunkTypes;
+        public List<Cel> cels = new List<Cel>();
 
         public static AsepriteFrame Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
@@ -46,6 +46,8 @@ namespace Negi0109.AsepriteImporter
                         break;
                     case ChunkType.Cel:
                         var cel = Cel.Deserialize(reader, aseprite);
+                        frame.cels.Add(cel);
+
                         break;
                     default:
                         break;
