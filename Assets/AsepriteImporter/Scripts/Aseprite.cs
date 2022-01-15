@@ -29,5 +29,7 @@ namespace Negi0109.AsepriteImporter
 
             return aseprite;
         }
+
+        public static void AsepriteFormatError() => throw new System.Exception("this file is not Aseprite format");
     }
 }

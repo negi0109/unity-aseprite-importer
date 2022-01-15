@@ -6,13 +6,12 @@ namespace Negi0109.AsepriteImporter
 {
     public class AsepriteFrame
     {
-        public enum ChunType
+        public enum ChunkType
         {
             OldPalatte1 = 0x0004,
             OldPalatte2 = 0x0011,
             Layer = 0x2004,
             Cel = 0x2005,
-            ColorProfile = 0x2007,
             Palette = 0x2019,
         }
 
@@ -27,19 +26,29 @@ namespace Negi0109.AsepriteImporter
 
             var frameEnd = reader.Position + reader.Dword();
             frame.magicNumber = reader.Word();
+            if (frame.magicNumber != 0xF1FA) Aseprite.AsepriteFormatError();
+
             frame.chunkCount = reader.Word();
             frame.duration = reader.Word();
             reader.Seek(2);
             reader.Seek(4);
 
-            frame.chunkTypes = new int[frame.chunkCount];
-
             for (int i = 0; i < frame.chunkCount; i++)
             {
                 var chunkEnd = reader.Position + reader.Dword();
-                var chunkType = reader.Word();
-                frame.chunkTypes[i] = chunkType;
+                ChunkType chunkType = (ChunkType)reader.Word();
 
+                switch (chunkType)
+                {
+                    case ChunkType.OldPalatte1:
+                    case ChunkType.OldPalatte2:
+                        // 現在未使用
+                        break;
+                    case ChunkType.Cel:
+                        break;
+                    default:
+                        break;
+                }
 
                 reader.Position = chunkEnd;
             }

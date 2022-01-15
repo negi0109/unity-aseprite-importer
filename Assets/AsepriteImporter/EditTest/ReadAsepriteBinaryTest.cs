@@ -44,8 +44,6 @@ namespace Tests
         [Test]
         public void AsepriteChunks()
         {
-            var frame = aseprite.frames[0];
-            Assert.That(frame.chunkTypes, Is.EqualTo(null));
         }
     }
 }

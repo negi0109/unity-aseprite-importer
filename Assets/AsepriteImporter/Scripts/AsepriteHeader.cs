@@ -25,6 +25,8 @@ namespace Negi0109.AsepriteImporter
 
             header.fileSize = reader.Dword();
             header.magicNumber = reader.Word();
+            if (header.magicNumber != 0xA5E0) Aseprite.AsepriteFormatError();
+
             header.frames = reader.Word();
             header.size.x = reader.Word();
             header.size.y = reader.Word();

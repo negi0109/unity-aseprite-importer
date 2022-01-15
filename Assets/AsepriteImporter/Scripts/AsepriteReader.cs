@@ -14,7 +14,6 @@ namespace Negi0109.AsepriteImporter
         }
 
         private BinaryReader reader;
-
         public AsepriteReader(Stream stream)
         {
             reader = new BinaryReader(stream);
