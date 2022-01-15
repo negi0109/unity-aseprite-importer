@@ -13,6 +13,11 @@ namespace Negi0109.AsepriteImporter
             set => reader.BaseStream.Position = value;
         }
 
+        public Stream BaseStream
+        {
+            get => reader.BaseStream;
+        }
+
         private BinaryReader reader;
         public AsepriteReader(Stream stream)
         {
