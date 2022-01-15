@@ -29,7 +29,7 @@ namespace Negi0109.AsepriteImporter
         public int Short() => reader.ReadInt16();
         public uint Dword() => reader.ReadUInt32();
         public int Long() => reader.ReadInt32();
-        public string String() => reader.ReadChars(Word()).ToString();
+        public string String() => new System.String(reader.ReadChars(Word()));
         public void Seek(long count) => reader.BaseStream.Seek(count, SeekOrigin.Current);
     }
 }

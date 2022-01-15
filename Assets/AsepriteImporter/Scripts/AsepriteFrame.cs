@@ -45,6 +45,10 @@ namespace Negi0109.AsepriteImporter
                     case ChunkType.OldPalatte2:
                         // 現在未使用
                         break;
+                    case ChunkType.Layer:
+                        var layer = AsepriteLayer.Deserialize(reader);
+                        aseprite.layers.Add(layer);
+                        break;
                     case ChunkType.Cel:
                         var cel = Cel.Deserialize(reader, aseprite);
                         frame.cels.Add(cel);
