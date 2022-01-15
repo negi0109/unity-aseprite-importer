@@ -59,6 +59,7 @@ namespace Negi0109.AsepriteImporter
         }
         public class Cel
         {
+            int layer;
             Vector2Int position;
             int opacity;
             int type;
@@ -68,6 +69,7 @@ namespace Negi0109.AsepriteImporter
             public static Cel Deserialize(AsepriteReader reader, Aseprite aseprite)
             {
                 var cel = new Cel();
+                cel.layer = reader.Word();
                 cel.position.x = reader.Short();
                 cel.position.y = reader.Short();
                 cel.opacity = reader.Byte();
