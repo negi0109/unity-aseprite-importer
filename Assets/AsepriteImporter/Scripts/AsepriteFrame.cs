@@ -101,6 +101,7 @@ namespace Negi0109.AsepriteImporter
                         var celPos = new Vector2Int(x, y);
                         var pos = cel.position + celPos;
                         var layer = aseprite.layers[cel.layer];
+                        if (layer.flags.HasFlag(AsepriteLayer.Flag.Visible) == false) continue;
 
                         if (pos.x >= 0 && pos.x < aseprite.header.size.x
                             && pos.y >= 0 && pos.y < aseprite.header.size.y)

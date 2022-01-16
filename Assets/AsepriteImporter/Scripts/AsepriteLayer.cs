@@ -7,6 +7,7 @@ namespace Negi0109.AsepriteImporter
 {
     public class AsepriteLayer
     {
+        [Flags]
         public enum Flag
         {
             Visible = 1,
@@ -24,7 +25,7 @@ namespace Negi0109.AsepriteImporter
             Tilemap = 2,
         }
 
-        public Flag flag;
+        public Flag flags;
         public Type type;
         public int childLevel;
         public Vector2Int size;
@@ -53,7 +54,7 @@ namespace Negi0109.AsepriteImporter
         public static AsepriteLayer Deserialize(AsepriteReader reader)
         {
             var layer = new AsepriteLayer();
-            layer.flag = (Flag)reader.Word();
+            layer.flags = (Flag)reader.Word();
             layer.type = (Type)reader.Word();
             layer.childLevel = reader.Word();
             layer.size.x = reader.Word();
