@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace Negi0109.AsepriteImporter
 {
@@ -28,6 +29,23 @@ namespace Negi0109.AsepriteImporter
         public int childLevel;
         public Vector2Int size;
         public int blendMode;
+        public static Func<Color, Color, float, Color>[] blendFuncs = new Func<Color, Color, float, Color>[]
+        {
+            // normal
+            (fg, bg, opacity) => {
+                fg.a *= opacity;
+
+                var o = Color.clear;
+                o.a = fg.a + bg.a * (1 - fg.a);
+                o.r = (fg.r * fg.a + bg.r * bg.a * (1 - fg.a)) / o.a;
+                o.g = (fg.g * fg.a + bg.g * bg.a * (1 - fg.a)) / o.a;
+                o.b = (fg.b * fg.a + bg.b * bg.a * (1 - fg.a)) / o.a;
+                if(o.a == 0) o = Color.clear;
+
+                return o;
+            },
+        };
+
         public float opacity;
         public string name;
         public uint tilesetIndex;

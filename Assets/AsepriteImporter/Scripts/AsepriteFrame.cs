@@ -100,12 +100,19 @@ namespace Negi0109.AsepriteImporter
                     {
                         var celPos = new Vector2Int(x, y);
                         var pos = cel.position + celPos;
+                        var layer = aseprite.layers[cel.layer];
 
                         if (pos.x >= 0 && pos.x < aseprite.header.size.x
                             && pos.y >= 0 && pos.y < aseprite.header.size.y)
                         {
                             var pixel = cel.pixels[celPos.x, celPos.y];
-                            tex.SetPixel(pos.x, aseprite.header.size.y - 1 - pos.y, pixel.GetColor(aseprite));
+                            var color = AsepriteLayer.blendFuncs[0](
+                                pixel.GetColor(aseprite),
+                                tex.GetPixel(pos.x, aseprite.header.size.y - 1 - pos.y),
+                                cel.opacity * layer.opacity
+                            );
+
+                            tex.SetPixel(pos.x, aseprite.header.size.y - 1 - pos.y, color);
                         }
                     }
                 }
@@ -119,7 +126,7 @@ namespace Negi0109.AsepriteImporter
         {
             public int layer;
             public Vector2Int position;
-            public int opacity;
+            public float opacity;
             public int type;
             public Vector2Int size;
             public AsepritePixel[,] pixels;
@@ -130,7 +137,7 @@ namespace Negi0109.AsepriteImporter
                 cel.layer = reader.Word();
                 cel.position.x = reader.Short();
                 cel.position.y = reader.Short();
-                cel.opacity = reader.Byte();
+                cel.opacity = reader.Byte() / 255f;
                 cel.type = reader.Word();
                 reader.Seek(7);
 
