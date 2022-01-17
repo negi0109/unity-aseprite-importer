@@ -34,8 +34,18 @@ namespace Negi0109.AsepriteImporter
         public override void OnInspectorGUI()
         {
             if (aseprite == null) Reload();
+            var separateX = serializedObject.FindProperty("separateX");
+            separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
 
-            previewToggle = EditorGUILayout.Foldout(previewToggle, "Preview");
+            if (separateX.boolValue)
+            {
+                EditorGUILayout.PropertyField(
+                    serializedObject.FindProperty("separates"),
+                    new GUIContent("separates")
+                );
+            }
+
+            previewToggle = EditorGUILayout.Foldout(previewToggle, "aseprite");
             if (previewToggle)
             {
                 previewScale = EditorGUILayout.Slider("preview scale", previewScale, 1, 100);
