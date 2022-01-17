@@ -90,10 +90,6 @@ namespace Negi0109.AsepriteImporter
 
         public void GenerateTexture(Aseprite aseprite, Texture2D tex, Vector2Int start)
         {
-            for (int x = 0; x < tex.width; x++)
-                for (int y = 0; y < tex.width; y++)
-                    tex.SetPixel(start.x + x, start.y + y, Color.clear);
-
             foreach (var cel in cels)
             {
                 for (int x = 0; x < cel.size.x; x++)
@@ -125,6 +121,10 @@ namespace Negi0109.AsepriteImporter
         public Texture2D GenerateTexture(Aseprite aseprite)
         {
             var tex = new Texture2D(aseprite.header.size.x, aseprite.header.size.y);
+            for (int x = 0; x < tex.width; x++)
+                for (int y = 0; y < tex.height; y++)
+                    tex.SetPixel(x, y, Color.clear);
+
             GenerateTexture(aseprite, tex, Vector2Int.zero);
             tex.Apply();
 

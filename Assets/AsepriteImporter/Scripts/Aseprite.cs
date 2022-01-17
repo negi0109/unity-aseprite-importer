@@ -44,6 +44,10 @@ namespace Negi0109.AsepriteImporter
         {
             var tex = new Texture2D(header.size.x, header.size.y * header.frames);
 
+            for (int x = 0; x < tex.width; x++)
+                for (int y = 0; y < tex.height; y++)
+                    tex.SetPixel(x, y, Color.clear);
+
             for (int i = 0; i < header.frames; i++)
             {
                 frames[i].GenerateTexture(this, tex, new Vector2Int(0, i * header.size.y));
