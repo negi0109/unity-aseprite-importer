@@ -11,7 +11,7 @@ namespace Negi0109.AsepriteImporter
         private Aseprite aseprite;
         private Texture2D texture;
 
-        private bool imagesToggle = true;
+        private bool previewToggle = true;
         private float previewScale = 10;
 
         private bool layersToggle = false;
@@ -35,13 +35,14 @@ namespace Negi0109.AsepriteImporter
         {
             if (aseprite == null) Reload();
 
-            imagesToggle = EditorGUILayout.BeginFoldoutHeaderGroup(imagesToggle, "Image Preview");
-            if (imagesToggle)
+            previewToggle = EditorGUILayout.Foldout(previewToggle, "Preview");
+            if (previewToggle)
             {
                 previewScale = EditorGUILayout.Slider("preview scale", previewScale, 1, 100);
 
                 var size = aseprite.header.size;
                 EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField("Frames");
                 for (int i = 0; i < aseprite.frames.Length; i++)
                 {
                     EditorGUILayout.LabelField($"{i}:");
@@ -56,22 +57,20 @@ namespace Negi0109.AsepriteImporter
                 EditorGUILayout.EndVertical();
 
                 EditorGUILayout.Space();
-            }
-            EditorGUILayout.EndFoldoutHeaderGroup();
 
-            layersToggle = EditorGUILayout.BeginFoldoutHeaderGroup(layersToggle, "Layers");
-            if (layersToggle)
-            {
-                EditorGUILayout.BeginVertical();
-                foreach (var layer in aseprite.layers)
+                layersToggle = EditorGUILayout.Foldout(layersToggle, "Layers");
+                if (layersToggle)
                 {
-                    EditorGUI.indentLevel = 1 + layer.childLevel;
-                    EditorGUILayout.LabelField(layer.name);
+                    EditorGUILayout.BeginVertical();
+                    foreach (var layer in aseprite.layers)
+                    {
+                        EditorGUI.indentLevel = 1 + layer.childLevel;
+                        EditorGUILayout.LabelField(layer.name);
+                    }
+                    EditorGUI.indentLevel = 0;
+                    EditorGUILayout.EndVertical();
                 }
-                EditorGUI.indentLevel = 0;
-                EditorGUILayout.EndVertical();
             }
-            EditorGUILayout.EndFoldoutHeaderGroup();
 
             ApplyRevertGUI();
         }
