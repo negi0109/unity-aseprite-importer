@@ -88,9 +88,11 @@ namespace Negi0109.AsepriteImporter
             return frame;
         }
 
-        public Texture2D GenerateTexture(Aseprite aseprite)
+        public void GenerateTexture(Aseprite aseprite, Texture2D tex, Vector2Int start)
         {
-            var tex = new Texture2D(aseprite.header.size.x, aseprite.header.size.y);
+            for (int x = 0; x < tex.width; x++)
+                for (int y = 0; y < tex.width; y++)
+                    tex.SetPixel(start.x + x, start.y + y, Color.clear);
 
             foreach (var cel in cels)
             {
@@ -109,15 +111,21 @@ namespace Negi0109.AsepriteImporter
                             var pixel = cel.pixels[celPos.x, celPos.y];
                             var color = AsepriteLayer.blendFuncs[0](
                                 pixel.GetColor(aseprite),
-                                tex.GetPixel(pos.x, aseprite.header.size.y - 1 - pos.y),
+                                tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
                                 cel.opacity * layer.opacity
                             );
 
-                            tex.SetPixel(pos.x, aseprite.header.size.y - 1 - pos.y, color);
+                            tex.SetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y, color);
                         }
                     }
                 }
             }
+        }
+
+        public Texture2D GenerateTexture(Aseprite aseprite)
+        {
+            var tex = new Texture2D(aseprite.header.size.x, aseprite.header.size.y);
+            GenerateTexture(aseprite, tex, Vector2Int.zero);
             tex.Apply();
 
             return tex;

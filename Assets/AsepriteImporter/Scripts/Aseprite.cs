@@ -40,6 +40,20 @@ namespace Negi0109.AsepriteImporter
             return aseprite;
         }
 
+        public Texture2D GenerateTexture()
+        {
+            var tex = new Texture2D(header.size.x, header.size.y * header.frames);
+
+            for (int i = 0; i < header.frames; i++)
+            {
+                frames[i].GenerateTexture(this, tex, new Vector2Int(0, i * header.size.y));
+            }
+
+            tex.Apply();
+
+            return tex;
+        }
+
         public static void AsepriteFormatError() => throw new System.Exception("this file is not Aseprite format");
 
         // 実行結果確認用にエディタから呼び出すメソッド
