@@ -37,6 +37,8 @@ namespace Negi0109.AsepriteImporter
         public override void OnInspectorGUI()
         {
             if (aseprite == null) Reload();
+
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("pixelsPerUnit"));
             var separateX = serializedObject.FindProperty("separateX");
             separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
 

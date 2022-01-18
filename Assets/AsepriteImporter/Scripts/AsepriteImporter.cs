@@ -44,13 +44,52 @@ namespace Negi0109.AsepriteImporter
         public bool separateX;
 
         public Separate[] separates;
+        public float pixelsPerUnit = 100f;
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var bytes = File.ReadAllBytes(ctx.assetPath);
-            var tmp = Aseprite.Deserialize(bytes);
+            var aseprite = Aseprite.Deserialize(bytes);
+            var texture = aseprite.GenerateTexture();
+            texture.filterMode = FilterMode.Point;
 
-            // aseprite = tmp;
+            ctx.AddObjectToAsset("texture", texture);
+            ctx.SetMainObject(texture);
+            if (separateX && separates.Length > 0)
+            {
+                var spriteSize = new Vector2(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
+                Debug.Log(spriteSize);
+
+                for (int i = 0; i < separates.Length; i++)
+                {
+                    var separate = separates[i];
+                    if (!separate.visible) continue;
+
+                    for (int j = 0; j < aseprite.frames.Length; j++)
+                    {
+                        var frame = aseprite.frames[j];
+                        var sprite = Sprite.Create(
+                            texture,
+                            new Rect(spriteSize.x * i, spriteSize.y * j, spriteSize.x, spriteSize.y),
+                            new Vector2(.5f, .5f),
+                            pixelsPerUnit
+                        );
+                        sprite.name = $"{separate.name}-{j}";
+                        ctx.AddObjectToAsset($"{i}-{j}", sprite);
+                    }
+                }
+            }
+            else
+            {
+                var sprite = Sprite.Create(
+                    texture,
+                    new Rect(0, 0, texture.width, texture.height),
+                    new Vector2(.5f, .5f),
+                    pixelsPerUnit
+                );
+
+                ctx.AddObjectToAsset("sprite", sprite);
+            }
         }
     }
 }
