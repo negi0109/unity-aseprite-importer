@@ -13,6 +13,7 @@ namespace Negi0109.AsepriteImporter
 
         private bool previewToggle = true;
         private float previewScale = 10;
+        private const int PREVIEW_WIDTH = 300;
 
         private bool layersToggle = false;
 
@@ -23,6 +24,8 @@ namespace Negi0109.AsepriteImporter
             aseprite = Aseprite.Deserialize(bytes);
             texture = aseprite.GenerateTexture();
             texture.filterMode = FilterMode.Point;
+            var width = (float)PREVIEW_WIDTH / aseprite.header.size.x;
+            previewScale = Mathf.Min(previewScale, width);
         }
 
         public override void OnEnable()
