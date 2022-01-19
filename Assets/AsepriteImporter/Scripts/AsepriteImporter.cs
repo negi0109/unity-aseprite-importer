@@ -13,7 +13,7 @@ namespace Negi0109.AsepriteImporter
         public class Separate
         {
             public string name;
-            public bool visible = true;
+            public bool invisible = true;
 
             [CustomPropertyDrawer(typeof(Separate))]
             public class Drawer : PropertyDrawer
@@ -29,7 +29,8 @@ namespace Negi0109.AsepriteImporter
                         EditorGUI.PropertyField(rect, property.FindPropertyRelative("name"), label);
                         rect.x = rect.x + rect.width + 5;
                         rect.width = 20;
-                        EditorGUI.PropertyField(rect, property.FindPropertyRelative("visible"), GUIContent.none);
+                        var invisible = property.FindPropertyRelative("invisible");
+                        invisible.boolValue = !EditorGUI.Toggle(rect, !invisible.boolValue);
                     }
                 }
 
@@ -58,12 +59,11 @@ namespace Negi0109.AsepriteImporter
             if (separateX && separates.Length > 0)
             {
                 var spriteSize = new Vector2(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
-                Debug.Log(spriteSize);
 
                 for (int i = 0; i < separates.Length; i++)
                 {
                     var separate = separates[i];
-                    if (!separate.visible) continue;
+                    if (separate.invisible) continue;
 
                     for (int j = 0; j < aseprite.frames.Length; j++)
                     {
