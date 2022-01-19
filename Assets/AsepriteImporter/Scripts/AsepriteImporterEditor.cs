@@ -50,6 +50,8 @@ namespace Negi0109.AsepriteImporter
                 );
             }
 
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("exportAnimation"));
+
             previewToggle = EditorGUILayout.Foldout(previewToggle, "aseprite");
             if (previewToggle)
             {

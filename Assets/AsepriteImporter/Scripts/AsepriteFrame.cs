@@ -17,7 +17,7 @@ namespace Negi0109.AsepriteImporter
         }
 
         public int magicNumber;
-        public int duration;
+        public float duration;
         public int chunkCount;
         public List<Cel> cels = new List<Cel>();
 
@@ -30,7 +30,7 @@ namespace Negi0109.AsepriteImporter
             if (frame.magicNumber != 0xF1FA) Aseprite.AsepriteFormatError();
 
             frame.chunkCount = reader.Word();
-            frame.duration = reader.Word();
+            frame.duration = reader.Word() / 1000f;
             reader.Seek(2);
             reader.Seek(4);
 
