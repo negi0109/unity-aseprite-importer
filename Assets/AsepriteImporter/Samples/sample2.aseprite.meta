@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: d16a584c770d64c75a75ac1c335df745
+guid: b8be56c2ac5e74f9a930a5576d7a0540
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,7 +8,13 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: a0f874cacdbc64e658c23d680e0f097b, type: 3}
-  separateX: 0
-  separates: []
+  separateX: 1
+  separates:
+  - name: front
+    invisible: 0
+  - name: back
+    invisible: 0
+  - name: right
+    invisible: 0
   pixelsPerUnit: 100
   exportAnimation: 1

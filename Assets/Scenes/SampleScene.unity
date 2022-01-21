@@ -136,7 +136,7 @@ GameObject:
   - component: {fileID: 653465887}
   - component: {fileID: 653465889}
   m_Layer: 0
-  m_Name: back-0
+  m_Name: sample
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
