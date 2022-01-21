@@ -11,13 +11,13 @@ namespace Negi0109.AsepriteImporter
         private Aseprite aseprite;
         private Texture2D texture;
 
-        private bool previewToggle = true;
+        private bool previewToggle = false;
         private float previewScale = 10;
         private const int PREVIEW_WIDTH = 300;
 
         private bool layersToggle = false;
 
-        public void Reload()
+        public void LoadAseprite()
         {
             var importer = target as AssetImporter;
             var bytes = File.ReadAllBytes(importer.assetPath);
@@ -28,16 +28,8 @@ namespace Negi0109.AsepriteImporter
             previewScale = Mathf.Min(previewScale, width);
         }
 
-        public override void OnEnable()
-        {
-            if (aseprite == null) Reload();
-            base.OnEnable();
-        }
-
         public override void OnInspectorGUI()
         {
-            if (aseprite == null) Reload();
-
             EditorGUILayout.PropertyField(serializedObject.FindProperty("pixelsPerUnit"));
             var separateX = serializedObject.FindProperty("separateX");
             separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
@@ -55,6 +47,8 @@ namespace Negi0109.AsepriteImporter
             previewToggle = EditorGUILayout.Foldout(previewToggle, "aseprite");
             if (previewToggle)
             {
+                if (aseprite == null) LoadAseprite();
+
                 previewScale = EditorGUILayout.Slider("preview scale", previewScale, 1, 100);
 
                 var size = aseprite.header.size;
