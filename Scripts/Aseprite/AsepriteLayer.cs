@@ -42,7 +42,7 @@ namespace Negi0109.AsepriteImporter
             ),
             // Screen
             (fg, bg, opacity) => BlendUtility.Normal(
-                BlendUtility.Blend(fg, bg, (f, b) => f + b - f * b, fg.a),
+                BlendUtility.Blend(fg, bg, (f, b) => 1 - (1 - f) * (1 - b), fg.a),
                 bg,
                 opacity
             ),
