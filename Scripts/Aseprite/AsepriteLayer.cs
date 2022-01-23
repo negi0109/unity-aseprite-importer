@@ -107,7 +107,16 @@ namespace Negi0109.AsepriteImporter
                 opacity
             ),
             // SoftLight
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(
+                    fg,
+                    bg,
+                    (f, b) => ((1 - b) * f + (1 - (1 - f) * (1 - b))) * b,
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
             // Difference
             BlendUtility.Normal,
             // Exclusion
