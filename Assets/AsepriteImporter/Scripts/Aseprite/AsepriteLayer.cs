@@ -35,7 +35,16 @@ namespace Negi0109.AsepriteImporter
             // Normal
             BlendUtility.Normal,
             // Multiply
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                new Color(
+                    bg.r * fg.r,
+                    bg.g * fg.g,
+                    bg.b * fg.b,
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
             // Screen
             BlendUtility.Normal,
             // Overlay
