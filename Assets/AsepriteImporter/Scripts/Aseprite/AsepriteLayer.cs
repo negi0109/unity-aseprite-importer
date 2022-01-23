@@ -36,19 +36,29 @@ namespace Negi0109.AsepriteImporter
             BlendUtility.Normal,
             // Multiply
             (fg, bg, opacity) => BlendUtility.Normal(
-                new Color(
-                    bg.r * fg.r,
-                    bg.g * fg.g,
-                    bg.b * fg.b,
+                BlendUtility.Blend(fg, bg, (f, b) => f * b, fg.a),
+                bg,
+                opacity
+            ),
+            // Screen
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(fg, bg, (f, b) => f + b - f * b, fg.a),
+                bg,
+                opacity
+            ),
+            // Overlay
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(
+                    fg,
+                    bg,
+                    (f, b) => b > 0.5f ?
+                        (b * 2 - 1) + f - (b * 2 - 1) * f
+                        : b * 2 * f,
                     fg.a
                 ),
                 bg,
                 opacity
             ),
-            // Screen
-            BlendUtility.Normal,
-            // Overlay
-            BlendUtility.Normal,
             // Darken
             BlendUtility.Normal,
             // Lighten
@@ -58,7 +68,18 @@ namespace Negi0109.AsepriteImporter
             // ColorBurn
             BlendUtility.Normal,
             // HardLight
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(
+                    fg,
+                    bg,
+                    (f, b) => f > 0.5f ?
+                        (f * 2 - 1) + b - (f * 2 - 1) * b
+                        : f * 2 * b,
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
             // SoftLight
             BlendUtility.Normal,
             // Difference

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Negi0109.AsepriteImporter
@@ -17,5 +18,8 @@ namespace Negi0109.AsepriteImporter
 
             return o;
         }
+
+        public static Color Blend(Color fg, Color bg, Func<float, float, float> rgbFunc, float a)
+            => new Color(rgbFunc(fg.r, bg.r), rgbFunc(fg.g, bg.g), rgbFunc(fg.b, bg.b), a);
     }
 }
