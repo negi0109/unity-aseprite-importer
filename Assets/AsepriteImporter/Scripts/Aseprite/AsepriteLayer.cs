@@ -72,9 +72,27 @@ namespace Negi0109.AsepriteImporter
                 opacity
             ),
             // ColorDodge
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(
+                    fg,
+                    bg,
+                    (f, b) => b == 0 ? 0 : b >= 1 - f ? 1 : b / (1 - f),
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
             // ColorBurn
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(
+                    fg,
+                    bg,
+                    (f, b) => b == 1 ? 1 : 1 - b >= f ? 0 : 1 - (1 - b) / f,
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
             // HardLight
             (fg, bg, opacity) => BlendUtility.Normal(
                 BlendUtility.Blend(
