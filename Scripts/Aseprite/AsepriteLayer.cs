@@ -148,11 +148,23 @@ namespace Negi0109.AsepriteImporter
             // Luminosity
             BlendUtility.Normal,
             // Addition
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(fg, bg, (f, b) => f + b, fg.a),
+                bg,
+                opacity
+            ),
             // Subtract
-            BlendUtility.Normal,
-            // Addition
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(fg, bg, (f, b) => Mathf.Max(0f, b - f), fg.a),
+                bg,
+                opacity
+            ),
+            // Divide
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(fg, bg, (f, b) => f == 0 ? 1 : Mathf.Min(1f, b / f), fg.a),
+                bg,
+                opacity
+            ),
         };
 
         public float opacity;
