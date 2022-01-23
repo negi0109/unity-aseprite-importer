@@ -104,7 +104,7 @@ namespace Negi0109.AsepriteImporter
                             && pos.y >= 0 && pos.y < aseprite.header.size.y)
                         {
                             var pixel = cel.pixels[celPos.x, celPos.y];
-                            var color = AsepriteLayer.blendFuncs[0](
+                            var color = AsepriteLayer.blendFuncs[layer.blendMode](
                                 pixel.GetColor(aseprite),
                                 tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
                                 cel.opacity * layer.opacity

@@ -32,19 +32,53 @@ namespace Negi0109.AsepriteImporter
         public int blendMode;
         public static Func<Color, Color, float, Color>[] blendFuncs = new Func<Color, Color, float, Color>[]
         {
-            // normal
-            (fg, bg, opacity) => {
-                fg.a *= opacity;
-
-                var o = Color.clear;
-                o.a = fg.a + bg.a * (1 - fg.a);
-                o.r = (fg.r * fg.a + bg.r * bg.a * (1 - fg.a)) / o.a;
-                o.g = (fg.g * fg.a + bg.g * bg.a * (1 - fg.a)) / o.a;
-                o.b = (fg.b * fg.a + bg.b * bg.a * (1 - fg.a)) / o.a;
-                if(o.a == 0) o = Color.clear;
-
-                return o;
-            },
+            // Normal
+            BlendUtility.Normal,
+            // Multiply
+            (fg, bg, opacity) => BlendUtility.Normal(
+                new Color(
+                    bg.r * fg.r,
+                    bg.g * fg.g,
+                    bg.b * fg.b,
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
+            // Screen
+            BlendUtility.Normal,
+            // Overlay
+            BlendUtility.Normal,
+            // Darken
+            BlendUtility.Normal,
+            // Lighten
+            BlendUtility.Normal,
+            // ColorDodge
+            BlendUtility.Normal,
+            // ColorBurn
+            BlendUtility.Normal,
+            // HardLight
+            BlendUtility.Normal,
+            // SoftLight
+            BlendUtility.Normal,
+            // Difference
+            BlendUtility.Normal,
+            // Exclusion
+            BlendUtility.Normal,
+            // Hue
+            BlendUtility.Normal,
+            // Saturation
+            BlendUtility.Normal,
+            // Color
+            BlendUtility.Normal,
+            // Luminosity
+            BlendUtility.Normal,
+            // Addition
+            BlendUtility.Normal,
+            // Subtract
+            BlendUtility.Normal,
+            // Addition
+            BlendUtility.Normal,
         };
 
         public float opacity;
