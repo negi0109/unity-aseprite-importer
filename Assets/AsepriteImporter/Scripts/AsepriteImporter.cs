@@ -58,7 +58,7 @@ namespace Negi0109.AsepriteImporter
 
             ctx.AddObjectToAsset("texture", texture);
             ctx.SetMainObject(texture);
-            if (!separateX || separates.Length == 0)
+            if (!separateX || separates == null || separates.Length == 0)
             {
                 separates = new Separate[]{
                     new Separate(){ name = Path.GetFileNameWithoutExtension(ctx.assetPath), invisible = false }
