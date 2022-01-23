@@ -129,7 +129,16 @@ namespace Negi0109.AsepriteImporter
                 opacity
             ),
             // Exclusion
-            BlendUtility.Normal,
+            (fg, bg, opacity) => BlendUtility.Normal(
+                BlendUtility.Blend(
+                    fg,
+                    bg,
+                    (f, b) => f + b - 2 * b * f,
+                    fg.a
+                ),
+                bg,
+                opacity
+            ),
             // Hue
             BlendUtility.Normal,
             // Saturation
