@@ -55,7 +55,6 @@ namespace Negi0109.AsepriteImporter
 
                         break;
                     case ChunkType.Palette:
-                        Debug.Log("Palette");
                         var size = reader.Dword();
                         var first = (int)reader.Dword();
                         var last = (int)reader.Dword();
