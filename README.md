@@ -20,9 +20,11 @@ Unity Package Managerから追加
 ### スプライトの分割
 - 列数 (separates)の指定
 - 列ごとの名前の設定
+
 ![screenshot1](README_Assets/screenshot1.png)
 ![screenshot2](README_Assets/screenshot2.png)
 
 ### アニメーションの利用
 - exportAnimation を指定
+
 ![screenshot3](README_Assets/screenshot3.png)
