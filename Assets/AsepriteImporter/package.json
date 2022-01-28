@@ -1,10 +1,12 @@
 {
   "name": "com.negi0109.aseprite-importer",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "displayName": "AsepriteImporter",
   "unity": "2020.2",
   "description": "Aseprite Importer",
   "license": "MIT",
+  "licensesUrl": "https://raw.githubusercontent.com/negi0109/unity-aseprite-importer/master/LICENSE",
+  "documentationUrl": "https://github.com/negi0109/unity-aseprite-importer/blob/master/README.md",
   "author": {
     "name": "negi0109",
     "url": "https://github.com/negi0109"
