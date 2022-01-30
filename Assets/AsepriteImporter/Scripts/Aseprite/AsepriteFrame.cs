@@ -155,6 +155,12 @@ namespace Negi0109.AsepriteImporter
                     cel.size.y = reader.Word();
                     cel.pixels = cel.ToPixels(reader, cel.size, aseprite);
                 }
+                else if (cel.type == 1)
+                {
+                    var frame = reader.Word();
+                    var linked = aseprite.frames[frame].cels.Find(other => other.layer == cel.layer);
+                    return linked;
+                }
                 else if (cel.type == 2)
                 {
                     cel.size.x = reader.Word();
