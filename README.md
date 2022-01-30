@@ -1,4 +1,4 @@
-[![release](https://img.shields.io/badge/Unity-2020.2+-white.svg?style=flat&logo=unity)](https://github.com/negi0109/unity-aseprite-importer)
+[![release](https://img.shields.io/badge/Unity-2020.3.0f1+-white.svg?style=flat&logo=unity)](https://github.com/negi0109/unity-aseprite-importer)
 [![release](https://github.com/negi0109/unity-aseprite-importer/actions/workflows/release.yml/badge.svg?branch=master)](https://github.com/negi0109/unity-aseprite-importer/actions/workflows/release.yml)
 
 # aseprite-importer
