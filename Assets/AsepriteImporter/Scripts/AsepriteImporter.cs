@@ -6,7 +6,7 @@ using UnityEditor.AssetImporters;
 
 namespace Negi0109.AsepriteImporter
 {
-    [ScriptedImporter(0, "aseprite")]
+    [ScriptedImporter(0, new string[] { "aseprite", "ase" })]
     public class AsepriteImporter : ScriptedImporter
     {
         [Serializable]
