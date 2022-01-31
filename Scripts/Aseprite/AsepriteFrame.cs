@@ -13,6 +13,7 @@ namespace Negi0109.AsepriteImporter
             OldPalatte2 = 0x0011,
             Layer = 0x2004,
             Cel = 0x2005,
+            Tags = 0x2018,
             Palette = 0x2019,
         }
 
@@ -53,6 +54,14 @@ namespace Negi0109.AsepriteImporter
                         var cel = Cel.Deserialize(reader, aseprite);
                         frame.cels.Add(cel);
 
+                        break;
+                    case ChunkType.Tags:
+                        var count = reader.Word();
+                        reader.Seek(8);
+                        for (int j = 0; j < count; j++)
+                        {
+                            aseprite.tags.Add(AsepriteTag.Deserialize(reader, aseprite));
+                        }
                         break;
                     case ChunkType.Palette:
                         var size = reader.Dword();
