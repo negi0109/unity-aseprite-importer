@@ -15,6 +15,7 @@ namespace Negi0109.AsepriteImporter
         public AsepriteFrame[] frames;
         public Color[] palatte;
         public List<AsepriteLayer> layers = new List<AsepriteLayer>();
+        public List<AsepriteTag> tags = new List<AsepriteTag>();
 
         public static Aseprite Deserialize(byte[] bytes)
         {

@@ -16,6 +16,7 @@ namespace Negi0109.AsepriteImporter
         private const int PREVIEW_WIDTH = 300;
 
         private bool layersToggle = false;
+        private bool tagsToggle = false;
 
         public void LoadAseprite()
         {
@@ -77,6 +78,18 @@ namespace Negi0109.AsepriteImporter
                     {
                         EditorGUI.indentLevel = 1 + layer.childLevel;
                         EditorGUILayout.LabelField(layer.name);
+                    }
+                    EditorGUI.indentLevel = 0;
+                    EditorGUILayout.EndVertical();
+                }
+
+                tagsToggle = EditorGUILayout.Foldout(tagsToggle, "Tags");
+                if (tagsToggle)
+                {
+                    EditorGUILayout.BeginVertical();
+                    foreach (var tag in aseprite.tags)
+                    {
+                        EditorGUILayout.LabelField(tag.name);
                     }
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.EndVertical();
