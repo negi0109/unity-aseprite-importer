@@ -32,6 +32,9 @@ namespace Negi0109.AsepriteImporter
         public override void OnInspectorGUI()
         {
             EditorGUILayout.PropertyField(serializedObject.FindProperty("pixelsPerUnit"));
+            var separateTags = serializedObject.FindProperty("separateTags");
+            separateTags.boolValue = EditorGUILayout.Toggle("Tag", separateTags.boolValue);
+
             var separateX = serializedObject.FindProperty("separateX");
             separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
 
@@ -83,7 +86,7 @@ namespace Negi0109.AsepriteImporter
                         colorStyle.normal.background = colorTex;
 
                         GUI.Box(color, "", colorStyle);
-                        EditorGUI.LabelField(label, tag.name);
+                        EditorGUI.LabelField(label, $"{tag.from,2} - {tag.to,2} : {tag.name}");
                     }
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.EndVertical();
