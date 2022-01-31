@@ -50,26 +50,6 @@ namespace Negi0109.AsepriteImporter
             {
                 if (aseprite == null) LoadAseprite();
 
-                previewScale = EditorGUILayout.Slider("preview scale", previewScale, 1, 100);
-
-                var size = aseprite.header.size;
-                EditorGUILayout.BeginVertical();
-                EditorGUILayout.LabelField("Frames");
-                for (int i = 0; i < aseprite.frames.Length; i++)
-                {
-                    EditorGUILayout.LabelField($"{i}:");
-                    var rect = EditorGUI.IndentedRect(EditorGUILayout.GetControlRect(true, size.y * previewScale));
-                    var height = 1f / aseprite.frames.Length;
-                    GUI.DrawTextureWithTexCoords(
-                        new Rect(rect.x, rect.y, size.x * previewScale, size.y * previewScale),
-                        texture,
-                        new Rect(0, height * i, 1, height)
-                    );
-                }
-                EditorGUILayout.EndVertical();
-
-                EditorGUILayout.Space();
-
                 layersToggle = EditorGUILayout.Foldout(layersToggle, "Layers");
                 if (layersToggle)
                 {
@@ -89,11 +69,45 @@ namespace Negi0109.AsepriteImporter
                     EditorGUILayout.BeginVertical();
                     foreach (var tag in aseprite.tags)
                     {
-                        EditorGUILayout.LabelField(tag.name);
+                        var rect = EditorGUILayout.GetControlRect(false);
+                        var color = new Rect(rect);
+                        var label = new Rect(rect);
+                        color.width = rect.height;
+                        label.x += rect.height + 5f;
+                        label.width = label.width - rect.height - 5f;
+
+                        var colorStyle = new GUIStyle(GUI.skin.box);
+                        var colorTex = new Texture2D(1, 1);
+                        colorTex.SetPixels(new Color[] { tag.color });
+                        colorTex.Apply();
+                        colorStyle.normal.background = colorTex;
+
+                        GUI.Box(color, "", colorStyle);
+                        EditorGUI.LabelField(label, tag.name);
                     }
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.EndVertical();
                 }
+
+                previewScale = EditorGUILayout.Slider("preview scale", previewScale, 1, 100);
+
+                var size = aseprite.header.size;
+                EditorGUILayout.BeginVertical();
+                EditorGUILayout.LabelField("Frames");
+                for (int i = 0; i < aseprite.frames.Length; i++)
+                {
+                    EditorGUILayout.LabelField($"{i}:");
+                    var rect = EditorGUI.IndentedRect(EditorGUILayout.GetControlRect(true, size.y * previewScale));
+                    var height = 1f / aseprite.frames.Length;
+                    GUI.DrawTextureWithTexCoords(
+                        new Rect(rect.x, rect.y, size.x * previewScale, size.y * previewScale),
+                        texture,
+                        new Rect(0, height * i, 1, height)
+                    );
+                }
+                EditorGUILayout.EndVertical();
+
+                EditorGUILayout.Space();
             }
 
             ApplyRevertGUI();
