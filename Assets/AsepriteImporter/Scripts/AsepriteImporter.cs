@@ -43,6 +43,7 @@ namespace Negi0109.AsepriteImporter
         // public Aseprite aseprite;
 
         public bool separateX;
+        public bool separateTags;
 
         public Separate[] separates;
         public float pixelsPerUnit = 100f;
@@ -50,10 +51,12 @@ namespace Negi0109.AsepriteImporter
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
-            var separates = this.separates;
             var bytes = File.ReadAllBytes(ctx.assetPath);
             var aseprite = Aseprite.Deserialize(bytes);
             var texture = aseprite.GenerateTexture();
+            var separates = this.separates;
+            var tags = aseprite.tags.ToArray();
+
             texture.filterMode = FilterMode.Point;
 
             ctx.AddObjectToAsset("texture", texture);
@@ -64,54 +67,62 @@ namespace Negi0109.AsepriteImporter
                     new Separate(){ name = Path.GetFileNameWithoutExtension(ctx.assetPath), invisible = false }
                 };
             }
+            if (!separateTags || aseprite.tags == null || aseprite.tags.Count == 0)
+                tags = new AsepriteTag[] { new AsepriteTag() { name = "", from = 0, to = aseprite.header.frames - 1 } };
 
             var spriteSize = new Vector2(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
 
             for (int i = 0; i < separates.Length; i++)
             {
-                var sprites = new Sprite[aseprite.header.frames];
-                var separate = separates[i];
-                if (separate.invisible) continue;
-
-                for (int j = 0; j < aseprite.header.frames; j++)
+                for (int j = 0; j < tags.Length; j++)
                 {
-                    var frame = aseprite.frames[j];
-                    var sprite = Sprite.Create(
-                        texture,
-                        new Rect(spriteSize.x * i, spriteSize.y * j, spriteSize.x, spriteSize.y),
-                        new Vector2(.5f, .5f),
-                        pixelsPerUnit
-                    );
-                    sprite.name = $"{separate.name}-{j}";
-                    sprites[j] = sprite;
-                    ctx.AddObjectToAsset($"{i}-{j}", sprite);
-                }
+                    var separate = separates[i];
+                    var tag = tags[j];
+                    var frames = tag.to - tag.from + 1;
+                    var sprites = new Sprite[frames];
 
-                if (exportAnimation)
-                {
-                    var clip = new AnimationClip();
-                    var curveBinding = new EditorCurveBinding();
-                    curveBinding.type = typeof(SpriteRenderer);
-                    curveBinding.path = "";
-                    curveBinding.propertyName = "m_Sprite";
+                    if (separate.invisible) continue;
 
-                    var keyframes = new ObjectReferenceKeyframe[aseprite.header.frames + 1];
-
-                    var time = 0f;
-                    for (int j = 0; j < aseprite.header.frames; j++)
+                    for (int k = 0; k < frames; k++)
                     {
-                        var frame = aseprite.frames[j];
-                        keyframes[j].time = time;
-                        keyframes[j].value = sprites[j];
-
-                        time += frame.duration;
+                        var frame = aseprite.frames[tag.from + k];
+                        var sprite = Sprite.Create(
+                            texture,
+                            new Rect(spriteSize.x * i, spriteSize.y * (tag.from + k), spriteSize.x, spriteSize.y),
+                            new Vector2(.5f, .5f),
+                            pixelsPerUnit
+                        );
+                        sprite.name = $"{separate.name}-{tag.name}-{k}";
+                        sprites[k] = sprite;
+                        ctx.AddObjectToAsset($"{i}-{j}-{k}", sprite);
                     }
-                    keyframes[aseprite.header.frames].time = time;
-                    keyframes[aseprite.header.frames].value = sprites[aseprite.header.frames - 1];
 
-                    AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
-                    clip.name = $"{separate.name}";
-                    ctx.AddObjectToAsset($"{i}", clip);
+                    if (exportAnimation)
+                    {
+                        var clip = new AnimationClip();
+                        var curveBinding = new EditorCurveBinding();
+                        curveBinding.type = typeof(SpriteRenderer);
+                        curveBinding.path = "";
+                        curveBinding.propertyName = "m_Sprite";
+
+                        var keyframes = new ObjectReferenceKeyframe[frames + 1];
+
+                        var time = 0f;
+                        for (int k = 0; k < frames; k++)
+                        {
+                            var frame = aseprite.frames[tag.from + k];
+                            keyframes[k].time = time;
+                            keyframes[k].value = sprites[k];
+
+                            time += frame.duration;
+                        }
+                        keyframes[frames].time = time;
+                        keyframes[frames].value = sprites[frames - 1];
+
+                        AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
+                        clip.name = $"{separate.name}-{tag.name}";
+                        ctx.AddObjectToAsset($"{i}-{j}", clip);
+                    }
                 }
             }
         }
