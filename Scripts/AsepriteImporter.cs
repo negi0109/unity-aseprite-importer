@@ -92,7 +92,7 @@ namespace Negi0109.AsepriteImporter
                             new Vector2(.5f, .5f),
                             pixelsPerUnit
                         );
-                        sprite.name = $"{separate.name}-{tag.name}-{k}";
+                        sprite.name = $"{separate.name}{(tag.name == "" ? "" : $"-{tag.name}")}-{k}";
                         sprites[k] = sprite;
                         ctx.AddObjectToAsset($"{i}-{j}-{k}", sprite);
                     }
@@ -120,7 +120,7 @@ namespace Negi0109.AsepriteImporter
                         keyframes[frames].value = sprites[frames - 1];
 
                         AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
-                        clip.name = $"{separate.name}-{tag.name}";
+                        clip.name = $"{separate.name}{(tag.name == "" ? "" : $"-{tag.name}")}";
                         ctx.AddObjectToAsset($"{i}-{j}", clip);
                     }
                 }
