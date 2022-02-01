@@ -19,8 +19,8 @@ namespace Negi0109.AsepriteImporter
 
         public static Aseprite Deserialize(byte[] bytes)
         {
-            var stream = new MemoryStream(bytes);
-            return Deserialize(stream);
+            using (var stream = new MemoryStream(bytes))
+                return Deserialize(stream);
         }
 
         public static Aseprite Deserialize(Stream stream)
