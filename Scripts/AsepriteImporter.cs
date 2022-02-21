@@ -52,7 +52,7 @@ namespace Negi0109.AsepriteImporter
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var bytes = File.ReadAllBytes(ctx.assetPath);
-            var aseprite = Aseprite.Deserialize(bytes);
+            var aseprite = Aseprite.Aseprite.Deserialize(bytes);
             var texture = aseprite.GenerateTexture();
             var separates = this.separates;
             var tags = aseprite.tags.ToArray();
@@ -68,7 +68,7 @@ namespace Negi0109.AsepriteImporter
                 };
             }
             if (!separateTags || aseprite.tags == null || aseprite.tags.Count == 0)
-                tags = new AsepriteTag[] { new AsepriteTag() { name = "", from = 0, to = aseprite.header.frames - 1 } };
+                tags = new Aseprite.Tag[] { new Aseprite.Tag() { name = "", from = 0, to = aseprite.header.frames - 1 } };
 
             var spriteSize = new Vector2(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
 

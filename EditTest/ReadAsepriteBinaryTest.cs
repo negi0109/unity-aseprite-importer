@@ -4,7 +4,7 @@ using NUnit.Framework;
 using UnityEngine.TestTools;
 using System.IO;
 
-using Negi0109.AsepriteImporter;
+using Negi0109.AsepriteImporter.Aseprite;
 
 namespace Tests
 {

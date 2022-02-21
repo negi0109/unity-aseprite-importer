@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
-    public class AsepriteHeader
+    public class Header
     {
         public uint fileSize;
         public int magicNumber;
@@ -19,9 +19,9 @@ namespace Negi0109.AsepriteImporter
         public Vector2Int gridPosition;
         public Vector2Int gridSize;
 
-        public static AsepriteHeader Deserialize(AsepriteReader reader)
+        public static Header Deserialize(AsepriteReader reader)
         {
-            var header = new AsepriteHeader();
+            var header = new Header();
 
             header.fileSize = reader.Dword();
             header.magicNumber = reader.Word();

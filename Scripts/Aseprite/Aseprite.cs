@@ -7,15 +7,15 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
     public class Aseprite
     {
-        public AsepriteHeader header;
-        public AsepriteFrame[] frames;
+        public Header header;
+        public Frame[] frames;
         public Color[] palatte;
-        public List<AsepriteLayer> layers = new List<AsepriteLayer>();
-        public List<AsepriteTag> tags = new List<AsepriteTag>();
+        public List<Layer> layers = new List<Layer>();
+        public List<Tag> tags = new List<Tag>();
 
         public static Aseprite Deserialize(byte[] bytes)
         {
@@ -28,14 +28,14 @@ namespace Negi0109.AsepriteImporter
             var aseprite = new Aseprite();
             var reader = new AsepriteReader(stream);
 
-            aseprite.header = AsepriteHeader.Deserialize(reader);
+            aseprite.header = Header.Deserialize(reader);
             aseprite.palatte = new Color[255];
-            aseprite.frames = new AsepriteFrame[aseprite.header.frames];
+            aseprite.frames = new Frame[aseprite.header.frames];
 
             for (int i = 0; i < aseprite.header.frames; i++)
-                aseprite.frames[i] = AsepriteFrame.Deserialize(reader, aseprite);
+                aseprite.frames[i] = Frame.Deserialize(reader, aseprite);
 
-            if (aseprite.header.colorDepth == AsepriteHeader.ColorDepth.Indexed)
+            if (aseprite.header.colorDepth == Header.ColorDepth.Indexed)
                 aseprite.palatte[aseprite.header.transparentIndex] = Color.clear;
 
             return aseprite;

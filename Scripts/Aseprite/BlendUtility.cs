@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
     public static class BlendUtility
     {

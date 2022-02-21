@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
-    public class AsepriteTag
+    public class Tag
     {
         public int from;
         public int to;
@@ -10,9 +10,9 @@ namespace Negi0109.AsepriteImporter
         public Color color;
         public string name;
 
-        public static AsepriteTag Deserialize(AsepriteReader reader, Aseprite aseprite)
+        public static Tag Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
-            var tag = new AsepriteTag();
+            var tag = new Tag();
             tag.from = reader.Word();
             tag.to = reader.Word();
             tag.loopAnimationDirection = reader.Byte();

@@ -8,7 +8,7 @@ namespace Negi0109.AsepriteImporter
     [CustomEditor(typeof(AsepriteImporter))]
     public class AsepriteImporterEditor : ScriptedImporterEditor
     {
-        private Aseprite aseprite;
+        private Aseprite.Aseprite aseprite;
         private Texture2D texture;
 
         private bool previewToggle = false;
@@ -22,7 +22,7 @@ namespace Negi0109.AsepriteImporter
         {
             var importer = target as AssetImporter;
             var bytes = File.ReadAllBytes(importer.assetPath);
-            aseprite = Aseprite.Deserialize(bytes);
+            aseprite = Aseprite.Aseprite.Deserialize(bytes);
             texture = aseprite.GenerateTexture();
             texture.filterMode = FilterMode.Point;
             var width = (float)PREVIEW_WIDTH / aseprite.header.size.x;

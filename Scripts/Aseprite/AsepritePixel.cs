@@ -2,18 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
-    public class AsepritePixel
+    public class Pixel
     {
         public Color color;
         public int paletteIndex = -1;
         public bool set = false;
 
-        public static AsepritePixel Deserialize(AsepriteReader reader, Aseprite aseprite)
+        public static Pixel Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
-            var pixel = new AsepritePixel();
-            if (aseprite.header.colorDepth == AsepriteHeader.ColorDepth.RGBA)
+            var pixel = new Pixel();
+            if (aseprite.header.colorDepth == Header.ColorDepth.RGBA)
             {
                 var r = reader.Byte() / 255f;
                 var g = reader.Byte() / 255f;
@@ -23,7 +23,7 @@ namespace Negi0109.AsepriteImporter
                 pixel.color = new Color(r, g, b, a);
                 pixel.set = true;
             }
-            else if (aseprite.header.colorDepth == AsepriteHeader.ColorDepth.Grayscale)
+            else if (aseprite.header.colorDepth == Header.ColorDepth.Grayscale)
             {
                 var v = reader.Byte() / 255f;
                 var a = reader.Byte() / 255f;
