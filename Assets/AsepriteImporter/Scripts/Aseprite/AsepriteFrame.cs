@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO.Compression;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
-    public class AsepriteFrame
+    public class Frame
     {
         public enum ChunkType
         {
@@ -22,9 +22,9 @@ namespace Negi0109.AsepriteImporter
         public int chunkCount;
         public List<AsepriteCel> cels = new List<AsepriteCel>();
 
-        public static AsepriteFrame Deserialize(AsepriteReader reader, Aseprite aseprite)
+        public static Frame Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
-            var frame = new AsepriteFrame();
+            var frame = new Frame();
 
             var frameEnd = reader.Position + reader.Dword();
             frame.magicNumber = reader.Word();
@@ -47,7 +47,7 @@ namespace Negi0109.AsepriteImporter
                         // 現在未使用
                         break;
                     case ChunkType.Layer:
-                        var layer = AsepriteLayer.Deserialize(reader);
+                        var layer = Layer.Deserialize(reader);
                         aseprite.layers.Add(layer);
                         break;
                     case ChunkType.Cel:
@@ -60,7 +60,7 @@ namespace Negi0109.AsepriteImporter
                         reader.Seek(8);
                         for (int j = 0; j < count; j++)
                         {
-                            aseprite.tags.Add(AsepriteTag.Deserialize(reader, aseprite));
+                            aseprite.tags.Add(Tag.Deserialize(reader, aseprite));
                         }
                         break;
                     case ChunkType.Palette:
@@ -107,13 +107,13 @@ namespace Negi0109.AsepriteImporter
                         var celPos = new Vector2Int(x, y);
                         var pos = cel.position + celPos;
                         var layer = aseprite.layers[cel.layer];
-                        if (layer.flags.HasFlag(AsepriteLayer.Flag.Visible) == false) continue;
+                        if (layer.flags.HasFlag(Layer.Flag.Visible) == false) continue;
 
                         if (pos.x >= 0 && pos.x < aseprite.header.size.x
                             && pos.y >= 0 && pos.y < aseprite.header.size.y)
                         {
                             var pixel = cel.pixels[celPos.x, celPos.y];
-                            var color = AsepriteLayer.blendFuncs[layer.blendMode](
+                            var color = Layer.blendFuncs[layer.blendMode](
                                 pixel.GetColor(aseprite),
                                 tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
                                 cel.opacity * layer.opacity

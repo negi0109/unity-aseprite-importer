@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO.Compression;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
     public class AsepriteCel
     {
@@ -12,7 +12,7 @@ namespace Negi0109.AsepriteImporter
         public float opacity;
         public int type;
         public Vector2Int size;
-        public AsepritePixel[,] pixels;
+        public Pixel[,] pixels;
 
         public static AsepriteCel Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
@@ -49,13 +49,13 @@ namespace Negi0109.AsepriteImporter
             return cel;
         }
 
-        public AsepritePixel[,] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
+        public Pixel[,] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
         {
-            var pixels = new AsepritePixel[size.x, size.y];
+            var pixels = new Pixel[size.x, size.y];
 
             for (int y = 0; y < size.y; y++)
                 for (int x = 0; x < size.x; x++)
-                    pixels[x, y] = AsepritePixel.Deserialize(reader, aseprite);
+                    pixels[x, y] = Pixel.Deserialize(reader, aseprite);
 
             return pixels;
         }

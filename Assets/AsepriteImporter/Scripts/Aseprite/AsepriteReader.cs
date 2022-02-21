@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
     public class AsepriteReader
     {

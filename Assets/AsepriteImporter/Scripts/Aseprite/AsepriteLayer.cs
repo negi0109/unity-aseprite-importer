@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Aseprite
 {
-    public class AsepriteLayer
+    public class Layer
     {
         [Flags]
         public enum Flag
@@ -171,9 +171,9 @@ namespace Negi0109.AsepriteImporter
         public string name;
         public uint tilesetIndex;
 
-        public static AsepriteLayer Deserialize(AsepriteReader reader)
+        public static Layer Deserialize(AsepriteReader reader)
         {
-            var layer = new AsepriteLayer();
+            var layer = new Layer();
             layer.flags = (Flag)reader.Word();
             layer.type = (Type)reader.Word();
             layer.childLevel = reader.Word();
