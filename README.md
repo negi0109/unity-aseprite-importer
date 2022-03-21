@@ -31,3 +31,6 @@ Unity Package Managerから追加
 - exportAnimation を指定
 
 ![screenshot3](README_Assets/screenshot3.png)
+
+- tagの読み込み
+![screenshot4](README_Assets/screenshot4.png)
