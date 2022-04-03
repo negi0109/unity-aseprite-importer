@@ -140,13 +140,74 @@ namespace Negi0109.AsepriteImporter.Aseprite
                 opacity
             ),
             // Hue
-            BlendUtility.Normal,
+            (fg, bg, opacity) => {
+                bg = BlendUtility.SetAlpha(bg);
+                fg = BlendUtility.SetAlpha(fg);
+
+                float s, l;
+                BlendUtility.ColorToHsl(bg, out _, out s, out l);
+
+                var color = BlendUtility.Lum(BlendUtility.Sat(fg, s), l);
+                color.a = fg.a;
+
+                return BlendUtility.Normal(
+                    color,
+                    bg,
+                    opacity
+                );
+            },
             // Saturation
-            BlendUtility.Normal,
+            (fg, bg, opacity) => {
+                bg = BlendUtility.SetAlpha(bg);
+                fg = BlendUtility.SetAlpha(fg);
+
+                float s, l;
+                BlendUtility.ColorToHsl(bg, out _, out _, out l);
+                BlendUtility.ColorToHsl(fg, out _, out s, out _);
+
+                var color = BlendUtility.Lum(BlendUtility.Sat(bg, s), l);
+                color.a = fg.a;
+
+                return BlendUtility.Normal(
+                    color,
+                    bg,
+                    opacity
+                );
+            },
             // Color
-            BlendUtility.Normal,
+            (fg, bg, opacity) => {
+                bg = BlendUtility.SetAlpha(bg);
+                fg = BlendUtility.SetAlpha(fg);
+
+                float l;
+                BlendUtility.ColorToHsl(bg, out _, out _, out l);
+
+                var color = BlendUtility.Lum(fg, l);
+                color.a = fg.a;
+
+                return BlendUtility.Normal(
+                    color,
+                    bg,
+                    opacity
+                );
+            },
             // Luminosity
-            BlendUtility.Normal,
+            (fg, bg, opacity) => {
+                bg = BlendUtility.SetAlpha(bg);
+                fg = BlendUtility.SetAlpha(fg);
+
+                float l;
+                BlendUtility.ColorToHsl(fg, out _, out _, out l);
+
+                var color = BlendUtility.Lum(bg, l);
+                color.a = fg.a;
+
+                return BlendUtility.Normal(
+                    color,
+                    bg,
+                    opacity
+                );
+            },
             // Addition
             (fg, bg, opacity) => BlendUtility.Normal(
                 BlendUtility.Blend(fg, bg, (f, b) => f + b, fg.a),
