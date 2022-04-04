@@ -1,6 +1,6 @@
 {
   "name": "com.negi0109.aseprite-importer",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "displayName": "AsepriteImporter",
   "unity": "2020.3",
   "description": "Aseprite Importer",
