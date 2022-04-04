@@ -144,10 +144,10 @@ namespace Negi0109.AsepriteImporter.Aseprite
                 bg = BlendUtility.SetAlpha(bg);
                 fg = BlendUtility.SetAlpha(fg);
 
-                float s, l;
-                BlendUtility.ColorToHsl(bg, out _, out s, out l);
+                var s = BlendUtility.Sat(bg);
+                var l = BlendUtility.Lum(bg);
 
-                var color = BlendUtility.Lum(BlendUtility.Sat(fg, s), l);
+                var color = BlendUtility.SetLum(BlendUtility.SetSat(fg, s), l);
                 color.a = fg.a;
 
                 return BlendUtility.Normal(
@@ -161,11 +161,10 @@ namespace Negi0109.AsepriteImporter.Aseprite
                 bg = BlendUtility.SetAlpha(bg);
                 fg = BlendUtility.SetAlpha(fg);
 
-                float s, l;
-                BlendUtility.ColorToHsl(bg, out _, out _, out l);
-                BlendUtility.ColorToHsl(fg, out _, out s, out _);
+                var s = BlendUtility.Sat(fg);
+                var l = BlendUtility.Lum(bg);
 
-                var color = BlendUtility.Lum(BlendUtility.Sat(bg, s), l);
+                var color = BlendUtility.SetLum(BlendUtility.SetSat(bg, s), l);
                 color.a = fg.a;
 
                 return BlendUtility.Normal(
@@ -179,10 +178,9 @@ namespace Negi0109.AsepriteImporter.Aseprite
                 bg = BlendUtility.SetAlpha(bg);
                 fg = BlendUtility.SetAlpha(fg);
 
-                float l;
-                BlendUtility.ColorToHsl(bg, out _, out _, out l);
+                var l = BlendUtility.Lum(bg);
 
-                var color = BlendUtility.Lum(fg, l);
+                var color = BlendUtility.SetLum(fg, l);
                 color.a = fg.a;
 
                 return BlendUtility.Normal(
@@ -196,10 +194,9 @@ namespace Negi0109.AsepriteImporter.Aseprite
                 bg = BlendUtility.SetAlpha(bg);
                 fg = BlendUtility.SetAlpha(fg);
 
-                float l;
-                BlendUtility.ColorToHsl(fg, out _, out _, out l);
+                var l = BlendUtility.Lum(fg);
 
-                var color = BlendUtility.Lum(bg, l);
+                var color = BlendUtility.SetLum(bg, l);
                 color.a = fg.a;
 
                 return BlendUtility.Normal(

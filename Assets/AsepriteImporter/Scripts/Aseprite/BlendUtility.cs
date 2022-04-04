@@ -19,23 +19,14 @@ namespace Negi0109.AsepriteImporter.Aseprite
             return o;
         }
 
-        public static void ColorToHsl(Color color, out float h, out float s, out float l)
+        public static float Sat(Color color)
         {
             var max = Mathf.Max(color.r, color.g, color.b);
             var min = Mathf.Min(color.r, color.g, color.b);
-
-            if (max == min) h = 0;
-            else if (max == color.r) h = (color.g - color.b) / (max - min) * 60;
-            else if (max == color.g) h = (color.b - color.r) / (max - min) * 60 + 120;
-            else h = (color.r - color.g) / (max - min) * 60 + 240;
-
-            if (h < 0) h += 360;
-
-            l = 0.3f * color.r + 0.59f * color.g + 0.11f * color.b;
-            s = max - min;
+            return max - min;
         }
 
-        public static Color Sat(Color color, float sat)
+        public static Color SetSat(Color color, float sat)
         {
             (int i, float v) min, mid, max;
             Compare(
@@ -58,17 +49,19 @@ namespace Negi0109.AsepriteImporter.Aseprite
             return color;
         }
 
-        public static Color Lum(Color color, float lum)
+        public static float Lum(Color color)
+            => 0.3f * color.r + 0.59f * color.g + 0.11f * color.b;
+
+        public static Color SetLum(Color color, float lum)
         {
-            float l;
-            ColorToHsl(color, out _, out _, out l);
+            float l = Lum(color);
 
             float d = lum - l;
             color.r += d;
             color.g += d;
             color.b += d;
 
-            ColorToHsl(color, out _, out _, out l);
+            l = Lum(color);
             float n = Mathf.Min(color[0], color[1], color[2]);
             float x = Mathf.Max(color[0], color[1], color[2]);
 
