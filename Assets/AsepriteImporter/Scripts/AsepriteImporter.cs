@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AssetImporters;
@@ -40,12 +41,41 @@ namespace Negi0109.AsepriteImporter
                 }
             }
         }
+        [Serializable]
+        public class TagSetting
+        {
+            public bool loopTime;
+
+            [CustomPropertyDrawer(typeof(TagSetting))]
+            public class Drawer : PropertyDrawer
+            {
+                public static float LineHeight => EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+
+                public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+                {
+                    var rect = position;
+                    rect.height = LineHeight;
+                    {
+                        rect.x += 20;
+                        rect.width -= 20;
+                        EditorGUI.PropertyField(rect, property.FindPropertyRelative("loopTime"), new GUIContent("looptime"));
+                    }
+                }
+
+                public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+                {
+                    return LineHeight;
+                }
+            }
+        }
         // public Aseprite aseprite;
 
         public bool separateX;
         public bool separateTags;
 
         public Separate[] separates;
+
+        public TagSetting[] tagSettings;
         public float pixelsPerUnit = 100f;
         public bool exportAnimation;
 
@@ -120,6 +150,13 @@ namespace Negi0109.AsepriteImporter
                         keyframes[frames].value = sprites[frames - 1];
 
                         AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
+                        if (separateTags)
+                        {
+                            var animationSetting = new AnimationClipSettings();
+                            animationSetting.loopTime = tagSettings[j].loopTime;
+                            AnimationUtility.SetAnimationClipSettings(clip, animationSetting);
+                        }
+
                         clip.name = $"{separate.name}{(tag.name == "" ? "" : $"-{tag.name}")}";
                         ctx.AddObjectToAsset($"{i}-{j}", clip);
                     }
