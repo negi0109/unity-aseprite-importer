@@ -11,12 +11,15 @@ namespace Negi0109.AsepriteImporter
         private Aseprite.Aseprite aseprite;
         private Texture2D texture;
 
+        #region PREVIEW
+
         private bool previewToggle = false;
         private float previewScale = 10;
         private const int PREVIEW_WIDTH = 300;
 
         private bool layersToggle = false;
-        private bool tagsToggle = false;
+
+        #endregion
 
         public void LoadAseprite()
         {
@@ -31,9 +34,9 @@ namespace Negi0109.AsepriteImporter
 
         public override void OnInspectorGUI()
         {
+            if (aseprite == null) LoadAseprite();
+
             EditorGUILayout.PropertyField(serializedObject.FindProperty("pixelsPerUnit"));
-            var separateTags = serializedObject.FindProperty("separateTags");
-            separateTags.boolValue = EditorGUILayout.Toggle("Tag", separateTags.boolValue);
 
             var separateX = serializedObject.FindProperty("separateX");
             separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
@@ -45,31 +48,23 @@ namespace Negi0109.AsepriteImporter
                     new GUIContent("separates")
                 );
             }
+            var exportAnimation = serializedObject.FindProperty("exportAnimation");
+            EditorGUILayout.PropertyField(exportAnimation);
 
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("exportAnimation"));
-
-            previewToggle = EditorGUILayout.Foldout(previewToggle, "aseprite");
-            if (previewToggle)
+            if (exportAnimation.boolValue)
             {
-                if (aseprite == null) LoadAseprite();
+                EditorGUILayout.Separator();
+                EditorGUILayout.LabelField("Animation", EditorStyles.boldLabel);
 
-                layersToggle = EditorGUILayout.Foldout(layersToggle, "Layers");
-                if (layersToggle)
+                var separateTags = serializedObject.FindProperty("separateTags");
+                separateTags.boolValue = EditorGUILayout.Toggle("Separate Tag", separateTags.boolValue);
+                if (separateTags.boolValue)
                 {
-                    EditorGUILayout.BeginVertical();
-                    foreach (var layer in aseprite.layers)
-                    {
-                        EditorGUI.indentLevel = 1 + layer.childLevel;
-                        EditorGUILayout.LabelField(layer.name);
-                    }
-                    EditorGUI.indentLevel = 0;
-                    EditorGUILayout.EndVertical();
-                }
+                    var tagSettings = serializedObject.FindProperty("tagSettings");
+                    tagSettings.arraySize = aseprite.tags.Count;
 
-                tagsToggle = EditorGUILayout.Foldout(tagsToggle, "Tags");
-                if (tagsToggle)
-                {
                     EditorGUILayout.BeginVertical();
+                    var index = 0;
                     foreach (var tag in aseprite.tags)
                     {
                         var rect = EditorGUILayout.GetControlRect(false);
@@ -87,6 +82,27 @@ namespace Negi0109.AsepriteImporter
 
                         GUI.Box(color, "", colorStyle);
                         EditorGUI.LabelField(label, $"{tag.from,2} - {tag.to,2} : {tag.name}");
+                        EditorGUILayout.PropertyField(tagSettings.GetArrayElementAtIndex(index));
+                        index++;
+                    }
+                    EditorGUI.indentLevel = 0;
+                    EditorGUILayout.EndVertical();
+                }
+            }
+
+            EditorGUILayout.Separator();
+
+            previewToggle = EditorGUILayout.Foldout(previewToggle, "aseprite");
+            if (previewToggle)
+            {
+                layersToggle = EditorGUILayout.Foldout(layersToggle, "Layers");
+                if (layersToggle)
+                {
+                    EditorGUILayout.BeginVertical();
+                    foreach (var layer in aseprite.layers)
+                    {
+                        EditorGUI.indentLevel = 1 + layer.childLevel;
+                        EditorGUILayout.LabelField(layer.name);
                     }
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.EndVertical();
