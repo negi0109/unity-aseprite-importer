@@ -150,12 +150,14 @@ namespace Negi0109.AsepriteImporter
                         keyframes[frames].value = sprites[frames - 1];
 
                         AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
+                        var animationSetting = new AnimationClipSettings();
                         if (separateTags)
                         {
-                            var animationSetting = new AnimationClipSettings();
                             animationSetting.loopTime = tagSettings[j].loopTime;
-                            AnimationUtility.SetAnimationClipSettings(clip, animationSetting);
                         }
+
+                        animationSetting.stopTime = time;
+                        AnimationUtility.SetAnimationClipSettings(clip, animationSetting);
 
                         clip.name = $"{separate.name}{(tag.name == "" ? "" : $"-{tag.name}")}";
                         ctx.AddObjectToAsset($"{i}-{j}", clip);
