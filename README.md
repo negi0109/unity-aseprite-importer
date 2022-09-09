@@ -11,7 +11,7 @@ Unity上でasepriteファイルを扱えるようにするエディタ拡張
 ## Install
 Unity Package Managerから追加
 - リンク先ページに記載のURLを追加
-    - https://github.com/negi0109/unity-aseprite-importer/releases/latest
+    - https://github.com/negi0109/unity-aseprite-importer.git#release
 - 過去のバージョンは [releases](https://github.com/negi0109/unity-aseprite-importer/releases) から確認・利用可能
 
 ## Features
@@ -35,3 +35,6 @@ Unity Package Managerから追加
 - tagの読み込み
 
 ![screenshot4](README_Assets/screenshot4.png)
+
+- 縁取り (edging)
+スプライト描画時端にゴミが表示される場合に１マス透明マスを追加するためのオプション
