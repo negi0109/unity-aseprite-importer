@@ -14,6 +14,7 @@ ScriptedImporter:
   tagSettings:
   - loopTime: 1
   - loopTime: 0
-  - loopTime: 0
+  - loopTime: 1
   pixelsPerUnit: 100
   exportAnimation: 1
+  edging: 1

@@ -78,6 +78,35 @@ namespace Negi0109.AsepriteImporter
         public TagSetting[] tagSettings;
         public float pixelsPerUnit = 100f;
         public bool exportAnimation;
+        public bool edging;
+
+        public Texture2D EdgingTexture(Texture2D texture, Vector2Int spriteSize)
+        {
+            var sx = texture.width / spriteSize.x;
+            var sy = texture.height / spriteSize.y;
+
+            var tex = new Texture2D(sx * (spriteSize.x + 1) + 2, sy * (spriteSize.y + 1) + 2);
+            tex.filterMode = FilterMode.Point;
+
+            for (int x = 0; x < tex.width; x++)
+                for (int y = 0; y < tex.height; y++)
+                    tex.SetPixel(x, y, Color.clear);
+
+            for (int x = 0; x < sx; x++)
+                for (int y = 0; y < sy; y++)
+                    for (int dx = 0; dx < spriteSize.x; dx++)
+                        for (int dy = 0; dy < spriteSize.y; dy++)
+                            tex.SetPixel(
+                                x * (spriteSize.x + 1) + dx + 1,
+                                y * (spriteSize.y + 1) + dy + 1,
+                                texture.GetPixel(
+                                    x * spriteSize.x + dx,
+                                    y * spriteSize.y + dy
+                                )
+                            );
+
+            return tex;
+        }
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
@@ -89,8 +118,6 @@ namespace Negi0109.AsepriteImporter
 
             texture.filterMode = FilterMode.Point;
 
-            ctx.AddObjectToAsset("texture", texture);
-            ctx.SetMainObject(texture);
             if (!separateX || separates == null || separates.Length == 0)
             {
                 separates = new Separate[]{
@@ -100,7 +127,15 @@ namespace Negi0109.AsepriteImporter
             if (!separateTags || aseprite.tags == null || aseprite.tags.Count == 0)
                 tags = new Aseprite.Tag[] { new Aseprite.Tag() { name = "", from = 0, to = aseprite.header.frames - 1 } };
 
-            var spriteSize = new Vector2(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
+            var spriteSize = new Vector2Int(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
+
+            if (edging)
+            {
+                texture = EdgingTexture(texture, spriteSize);
+            }
+
+            ctx.AddObjectToAsset("texture", texture);
+            ctx.SetMainObject(texture);
 
             for (int i = 0; i < separates.Length; i++)
             {
@@ -118,7 +153,9 @@ namespace Negi0109.AsepriteImporter
                         var frame = aseprite.frames[tag.from + k];
                         var sprite = Sprite.Create(
                             texture,
-                            new Rect(spriteSize.x * i, spriteSize.y * (tag.from + k), spriteSize.x, spriteSize.y),
+                            edging ?
+                                new Rect((spriteSize.x + 1) * i + 1, (spriteSize.y + 1) * (tag.from + k) + 1, spriteSize.x, spriteSize.y) :
+                                new Rect(spriteSize.x * i, spriteSize.y * (tag.from + k), spriteSize.x, spriteSize.y),
                             new Vector2(.5f, .5f),
                             pixelsPerUnit
                         );
