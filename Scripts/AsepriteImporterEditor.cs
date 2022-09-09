@@ -41,6 +41,9 @@ namespace Negi0109.AsepriteImporter
             var separateX = serializedObject.FindProperty("separateX");
             separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
 
+            var edging = serializedObject.FindProperty("edging");
+            edging.boolValue = EditorGUILayout.Toggle("edging", edging.boolValue);
+
             if (separateX.boolValue)
             {
                 EditorGUILayout.PropertyField(

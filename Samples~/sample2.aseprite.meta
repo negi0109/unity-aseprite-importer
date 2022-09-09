@@ -17,5 +17,7 @@ ScriptedImporter:
     invisible: 0
   - name: right
     invisible: 0
+  tagSettings: []
   pixelsPerUnit: 100
   exportAnimation: 1
+  edging: 1
