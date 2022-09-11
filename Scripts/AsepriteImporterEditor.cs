@@ -61,6 +61,7 @@ namespace Negi0109.AsepriteImporter
 
                 var separateTags = serializedObject.FindProperty("separateTags");
                 separateTags.boolValue = EditorGUILayout.Toggle("Separate Tag", separateTags.boolValue);
+
                 if (separateTags.boolValue)
                 {
                     var tagSettings = serializedObject.FindProperty("tagSettings");
@@ -90,6 +91,11 @@ namespace Negi0109.AsepriteImporter
                     }
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.EndVertical();
+                }
+                else
+                {
+                    var baseSetting = serializedObject.FindProperty("baseSetting");
+                    EditorGUILayout.PropertyField(baseSetting);
                 }
             }
 

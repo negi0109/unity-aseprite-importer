@@ -80,6 +80,8 @@ namespace Negi0109.AsepriteImporter
         public bool exportAnimation;
         public bool edging;
 
+        public TagSetting baseSetting;
+
         public Texture2D EdgingTexture(Texture2D texture, Vector2Int spriteSize)
         {
             var sx = texture.width / spriteSize.x;
@@ -114,6 +116,7 @@ namespace Negi0109.AsepriteImporter
             var aseprite = Aseprite.Aseprite.Deserialize(bytes);
             var texture = aseprite.GenerateTexture();
             var separates = this.separates;
+            var tagSettings = this.tagSettings;
             var tags = aseprite.tags.ToArray();
 
             texture.filterMode = FilterMode.Point;
@@ -125,7 +128,10 @@ namespace Negi0109.AsepriteImporter
                 };
             }
             if (!separateTags || aseprite.tags == null || aseprite.tags.Count == 0)
+            {
                 tags = new Aseprite.Tag[] { new Aseprite.Tag() { name = "", from = 0, to = aseprite.header.frames - 1 } };
+                tagSettings = new TagSetting[] { baseSetting ?? new TagSetting() };
+            }
 
             var spriteSize = new Vector2Int(aseprite.header.size.x / separates.Length, aseprite.header.size.y);
 
@@ -188,7 +194,7 @@ namespace Negi0109.AsepriteImporter
 
                         AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
                         var animationSetting = new AnimationClipSettings();
-                        if (separateTags)
+
                         {
                             animationSetting.loopTime = tagSettings[j].loopTime;
                         }
