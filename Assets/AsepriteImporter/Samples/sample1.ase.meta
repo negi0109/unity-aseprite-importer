@@ -11,5 +11,9 @@ ScriptedImporter:
   separateX: 0
   separateTags: 0
   separates: []
+  tagSettings: []
   pixelsPerUnit: 100
   exportAnimation: 1
+  edging: 0
+  baseSetting:
+    loopTime: 1
