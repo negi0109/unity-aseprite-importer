@@ -16,7 +16,7 @@ Unity上でasepriteファイルを扱えるようにするエディタ拡張
      - 軽い機能追加なども含みますが、未使用時の挙動は変更しません
 
 ## Install
-Unity Package Managerから追加
+Unity Package Managerから追加 ([図解つきの詳細はこちら](README-Install.md))
 - 最新版
     - https://github.com/negi0109/unity-aseprite-importer.git#release
 - 過去のバージョンは [releases](https://github.com/negi0109/unity-aseprite-importer/releases) から確認・利用可能
