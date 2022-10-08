@@ -23,11 +23,6 @@ Unity Package Managerから追加 ([図解つきの詳細はこちら](README-In
   - 開発中のため最新版ではなくrelease上のgithubリンクでの利用を推奨します
 
 ## Features
-- asepriteファイル上の1フレームごとのスプライト (スプライトシートの作成)
-- スプライトの分割
-- アニメーションの利用
-
-## Features
 Unity上でAseprite(.ase, .aseprite)が利用できるようになるエディタ拡張です.
 
 画像ファイルなどと同様Assetsフォルダ上にasepriteファイルを配置すると利用可能です
