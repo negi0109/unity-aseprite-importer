@@ -12,6 +12,7 @@ Unity package managerからのインストール方法
 1. Window > PackageManagerからPackageManagerを起動
 
 2. +ボタンから`Add package from git URL`を選択
+
 ![](README_Assets/unity_package_manager_screenshot.png)
 
 3. 入力欄に取得したgithubリンクを貼り付ける
