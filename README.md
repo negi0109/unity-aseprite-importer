@@ -49,10 +49,13 @@ Tag を指定で利用できます
 
 ### スプライトの分割
 aseprite上の画像を分割し複数スプライトとして扱いたい場合に用います
-- 列数 (separates)の指定
-- 列ごとの名前の設定
+- 利用したい際は分割したい軸に合わせて separateX, separateYの指定
+- 列や行ごとの名前の設定
 
 ![screenshot1](README_Assets/screenshot1.png)
+
+- 下記のように分割した単位でアニメーションやスプライトが生成される
+
 ![screenshot2](README_Assets/screenshot2.png)
 
 ## License
