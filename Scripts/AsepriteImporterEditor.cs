@@ -38,19 +38,29 @@ namespace Negi0109.AsepriteImporter
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("pixelsPerUnit"));
 
-            var separateX = serializedObject.FindProperty("separateX");
-            separateX.boolValue = EditorGUILayout.Toggle("Separate", separateX.boolValue);
-
             var edging = serializedObject.FindProperty("edging");
             edging.boolValue = EditorGUILayout.Toggle("edging", edging.boolValue);
 
+            var separateX = serializedObject.FindProperty("separateX");
+            separateX.boolValue = EditorGUILayout.Toggle("SeparateX", separateX.boolValue);
             if (separateX.boolValue)
             {
                 EditorGUILayout.PropertyField(
-                    serializedObject.FindProperty("separates"),
-                    new GUIContent("separates")
+                    serializedObject.FindProperty("separatesX"),
+                    new GUIContent("separatesX")
                 );
             }
+
+            var separateY = serializedObject.FindProperty("separateY");
+            separateY.boolValue = EditorGUILayout.Toggle("separateY", separateY.boolValue);
+            if (separateY.boolValue)
+            {
+                EditorGUILayout.PropertyField(
+                    serializedObject.FindProperty("separatesY"),
+                    new GUIContent("separatesY")
+                );
+            }
+
             var exportAnimation = serializedObject.FindProperty("exportAnimation");
             EditorGUILayout.PropertyField(exportAnimation);
 
