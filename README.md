@@ -38,6 +38,10 @@ Unity上でAseprite(.ase, .aseprite)が利用できるようになるエディ�
 ![screenshot3](README_Assets/screenshot3.png)
 
 #### tagの読み込み
+Tag を指定で利用できます
+
+各タグ単位でAnimationの生成を行えます
+
 ![screenshot4](README_Assets/screenshot4.png)
 
 ### 縁取り (edging)
