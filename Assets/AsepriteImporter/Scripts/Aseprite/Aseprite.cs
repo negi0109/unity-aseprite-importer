@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -43,6 +44,13 @@ namespace Negi0109.AsepriteImporter.Aseprite
 
         public Texture2D GenerateTexture()
         {
+            HashSet<int> activeLayers = new HashSet<int>(Enumerable.Range(0, layers.Count));
+
+            return GenerateTexture(activeLayers);
+        }
+
+        public Texture2D GenerateTexture(HashSet<int> activeLayers)
+        {
             var tex = new Texture2D(header.size.x, header.size.y * header.frames);
 
             for (int x = 0; x < tex.width; x++)
@@ -51,7 +59,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
 
             for (int i = 0; i < header.frames; i++)
             {
-                frames[i].GenerateTexture(this, tex, new Vector2Int(0, i * header.size.y));
+                frames[i].GenerateTexture(this, tex, new Vector2Int(0, i * header.size.y), activeLayers);
             }
 
             tex.Apply();
