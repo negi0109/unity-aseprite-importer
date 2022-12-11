@@ -115,6 +115,11 @@ namespace Negi0109.AsepriteImporter
 
             {
                 EditorGUILayout.LabelField("SecondaryTexture", EditorStyles.boldLabel);
+
+#if !UNITY_2022_2_OR_NEWER
+                EditorGUILayout.HelpBox(@"Output of SecondaryTexture is valid only in Unity2022.2 or later.
+This Unity version only outputs as Texture2D.", MessageType.Info);
+#endif
                 var layerSettings = serializedObject.FindProperty("layerSettings");
                 var enumerator = layerSettings.GetEnumerator();
                 var dic = new Dictionary<string, SerializedProperty>();
