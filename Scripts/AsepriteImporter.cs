@@ -1,9 +1,10 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
-using UnityEngine;
+using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.AssetImporters;
+using UnityEngine;
 
 namespace Negi0109.AsepriteImporter
 {
@@ -68,6 +69,15 @@ namespace Negi0109.AsepriteImporter
                 }
             }
         }
+
+        [Serializable]
+        public class LayerSetting
+        {
+            public string name;
+            public bool secondaryTexture;
+            public string secondaryTextureName;
+        }
+
         // public Aseprite aseprite;
 
         public bool separateX;
@@ -78,6 +88,7 @@ namespace Negi0109.AsepriteImporter
         public Separate[] separatesY;
 
         public TagSetting[] tagSettings;
+        public LayerSetting[] layerSettings = new LayerSetting[0];
         public float pixelsPerUnit = 100f;
         public bool exportAnimation;
         public bool edging;
@@ -116,14 +127,49 @@ namespace Negi0109.AsepriteImporter
         {
             var bytes = File.ReadAllBytes(ctx.assetPath);
             var aseprite = Aseprite.Aseprite.Deserialize(bytes);
-            var texture = aseprite.GenerateTexture();
+            Texture2D texture = aseprite.GenerateTexture();
+            SecondarySpriteTexture[] secondaryTextures;
             var separatesX = this.separatesX;
             var separatesY = this.separatesY;
             var tagSettings = this.tagSettings;
             var tags = aseprite.tags.ToArray();
             var baseName = Path.GetFileNameWithoutExtension(ctx.assetPath);
 
-            texture.filterMode = FilterMode.Point;
+            // SecondaryTexture
+            {
+                var layerSettingHash = layerSettings.ToDictionary(layerSetting => layerSetting.name);
+
+                var dic = new Dictionary<string, HashSet<int>>();
+                var mainTexSet = new HashSet<int>();
+                var current = 0;
+                for (int i = 0; i < aseprite.layers.Count; i++)
+                {
+                    if (aseprite.layers[i].childLevel == 0) current = i;
+                    var layerName = aseprite.layers[current].name;
+
+                    if (layerSettingHash.ContainsKey(layerName) && layerSettingHash[layerName].secondaryTexture)
+                    {
+                        var secondaryTextureName = layerSettingHash[layerName].secondaryTextureName;
+                        if (!dic.ContainsKey(secondaryTextureName)) dic.Add(secondaryTextureName, new HashSet<int>());
+                        dic[secondaryTextureName].Add(i);
+                    }
+                    else
+                    {
+                        mainTexSet.Add(i);
+                    }
+                }
+
+                texture = aseprite.GenerateTexture(mainTexSet);
+
+                secondaryTextures = dic.Keys.Select(
+                    key =>
+                    {
+                        var tex = new SecondarySpriteTexture() { name = key, texture = aseprite.GenerateTexture(dic[key]) };
+                        tex.texture.name = key;
+                        return tex;
+                    }
+                ).ToArray();
+            }
 
             if (!separateX || separatesX == null || separatesX.Length == 0)
             {
@@ -149,9 +195,22 @@ namespace Negi0109.AsepriteImporter
             if (edging)
             {
                 texture = EdgingTexture(texture, spriteSize);
+
+                for (int i = 0; i < secondaryTextures.Length; i++)
+                {
+                    secondaryTextures[i].texture = EdgingTexture(secondaryTextures[i].texture, spriteSize);
+                }
             }
 
+            texture.filterMode = FilterMode.Point;
+
             ctx.AddObjectToAsset("texture", texture);
+            for (int i = 0; i < secondaryTextures.Length; i++)
+            {
+                secondaryTextures[i].texture.filterMode = FilterMode.Point;
+                ctx.AddObjectToAsset("texture-" + secondaryTextures[i].name, secondaryTextures[i].texture);
+            }
+
             ctx.SetMainObject(texture);
 
             for (int x = 0; x < separatesX.Length; x++)
@@ -171,6 +230,22 @@ namespace Negi0109.AsepriteImporter
                         for (int k = 0; k < frames; k++)
                         {
                             var frame = aseprite.frames[tag.from + k];
+
+#if UNITY_2022_2_OR_NEWER
+                            var sprite = Sprite.Create(
+                                texture,
+                                edging ?
+                                    new Rect(
+                                        (spriteSize.x + 1) * x + 1,
+                                        (spriteSize.y + 1) * ((tag.from + k) * separatesY.Length + y) + 1,
+                                        spriteSize.x, spriteSize.y) :
+                                    new Rect(spriteSize.x * x, spriteSize.y * (tag.from + k), spriteSize.x, spriteSize.y),
+                                new Vector2(.5f, .5f),
+                                pixelsPerUnit, 0,
+                                SpriteMeshType.Tight, Vector4.zero,
+                                false, secondaryTextures
+                            );
+#else
                             var sprite = Sprite.Create(
                                 texture,
                                 edging ?
@@ -182,6 +257,7 @@ namespace Negi0109.AsepriteImporter
                                 new Vector2(.5f, .5f),
                                 pixelsPerUnit
                             );
+#endif
                             sprite.name = baseName;
                             if (separateX) sprite.name += $"-{separatesX[x].name}";
                             if (separateY) sprite.name += $"-{separatesY[y].name}";

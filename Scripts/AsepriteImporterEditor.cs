@@ -1,7 +1,9 @@
-using UnityEditor.AssetImporters;
-using UnityEditor;
-using UnityEngine;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using UnityEditor;
+using UnityEditor.AssetImporters;
+using UnityEngine;
 
 namespace Negi0109.AsepriteImporter
 {
@@ -107,6 +109,58 @@ namespace Negi0109.AsepriteImporter
                     var baseSetting = serializedObject.FindProperty("baseSetting");
                     EditorGUILayout.PropertyField(baseSetting);
                 }
+            }
+
+            EditorGUILayout.Separator();
+
+            {
+                EditorGUILayout.LabelField("SecondaryTexture", EditorStyles.boldLabel);
+
+#if !UNITY_2022_2_OR_NEWER
+                EditorGUILayout.HelpBox(@"Output of SecondaryTexture is valid only in Unity2022.2 or later.
+This Unity version only outputs as Texture2D.", MessageType.Info);
+#endif
+                var layerSettings = serializedObject.FindProperty("layerSettings");
+                var enumerator = layerSettings.GetEnumerator();
+                var dic = new Dictionary<string, SerializedProperty>();
+
+                while (enumerator.MoveNext())
+                {
+                    var s = enumerator.Current as SerializedProperty;
+                    dic.Add(s.FindPropertyRelative("name").stringValue, s);
+                }
+
+                EditorGUILayout.BeginVertical();
+
+                foreach (var layer in aseprite.layers)
+                {
+                    if (layer.childLevel == 0)
+                    {
+                        EditorGUI.indentLevel++;
+                        if (dic.ContainsKey(layer.name))
+                        {
+                            var setting = dic[layer.name];
+
+                            EditorGUILayout.BeginHorizontal();
+                            var secondaryTexture = setting.FindPropertyRelative("secondaryTexture");
+                            EditorGUILayout.PropertyField(secondaryTexture, new GUIContent(layer.name));
+
+                            EditorGUI.BeginDisabledGroup(!secondaryTexture.boolValue);
+                            var secondaryTextureName = setting.FindPropertyRelative("secondaryTextureName");
+                            EditorGUILayout.PropertyField(secondaryTextureName, new GUIContent(""));
+                            EditorGUI.EndDisabledGroup();
+                            EditorGUILayout.EndHorizontal();
+                        }
+                        else
+                        {
+                            layerSettings.arraySize++;
+                            var setting = layerSettings.GetArrayElementAtIndex(layerSettings.arraySize - 1);
+                            setting.FindPropertyRelative("name").stringValue = layer.name;
+                        }
+                        EditorGUI.indentLevel--;
+                    }
+                }
+                EditorGUILayout.EndVertical();
             }
 
             EditorGUILayout.Separator();

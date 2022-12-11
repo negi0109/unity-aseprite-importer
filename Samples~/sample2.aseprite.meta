@@ -20,6 +20,10 @@ ScriptedImporter:
     invisible: 0
   separatesY: []
   tagSettings: []
+  layerSettings:
+  - name: Layer 1
+    secondaryTexture: 0
+    secondaryTextureName: 
   pixelsPerUnit: 100
   exportAnimation: 1
   edging: 0

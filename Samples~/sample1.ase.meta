@@ -14,8 +14,12 @@ ScriptedImporter:
   separatesX: []
   separatesY: []
   tagSettings: []
+  layerSettings:
+  - name: Layer 1
+    secondaryTexture: 0
+    secondaryTextureName: 
   pixelsPerUnit: 100
   exportAnimation: 1
-  edging: 0
+  edging: 1
   baseSetting:
     loopTime: 1
