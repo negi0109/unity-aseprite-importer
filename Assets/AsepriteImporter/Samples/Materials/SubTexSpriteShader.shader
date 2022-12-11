@@ -3,6 +3,7 @@ Shader "Unlit/SubTexSpriteShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _MaskTex ("Texture", 2D) = "white" {}
         _Threshold ("_Threshold", Range(0,1)) = 1
     }
     SubShader
