@@ -121,13 +121,19 @@ namespace Negi0109.AsepriteImporter
 This Unity version only outputs as Texture2D.", MessageType.Info);
 #endif
                 var layerSettings = serializedObject.FindProperty("layerSettings");
-                var enumerator = layerSettings.GetEnumerator();
+                var layerSettingsSize = layerSettings.arraySize;
                 var dic = new Dictionary<string, SerializedProperty>();
-
-                while (enumerator.MoveNext())
                 {
-                    var s = enumerator.Current as SerializedProperty;
-                    dic.Add(s.FindPropertyRelative("name").stringValue, s);
+                    var deleted = 0;
+
+                    for (var i = 0; i < layerSettingsSize; i++)
+                    {
+                        var s = layerSettings.GetArrayElementAtIndex(i - deleted);
+                        var name = s.FindPropertyRelative("name").stringValue;
+                        var exists = aseprite.layers.Exists(l => l.name.Equals(name));
+                        if (exists) dic.Add(name, s);
+                        else { layerSettings.DeleteArrayElementAtIndex(i); deleted++; };
+                    }
                 }
 
                 EditorGUILayout.BeginVertical();
