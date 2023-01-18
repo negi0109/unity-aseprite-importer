@@ -77,12 +77,29 @@ namespace Negi0109.AsepriteImporter
                 if (separateTags.boolValue)
                 {
                     var tagSettings = serializedObject.FindProperty("tagSettings");
-                    tagSettings.arraySize = aseprite.tags.Count;
+                    var tagSettingsSize = tagSettings.arraySize;
+                    var dic = new Dictionary<string, SerializedProperty>();
+                    {
+                        var deleted = 0;
+
+                        for (var i = 0; i < tagSettingsSize; i++)
+                        {
+                            var s = tagSettings.GetArrayElementAtIndex(i - deleted);
+                            var name = s.FindPropertyRelative("name").stringValue;
+                            var exists = aseprite.tags.Exists(t => t.name.Equals(name));
+                            if (exists) dic.Add(name, s);
+                            else { tagSettings.DeleteArrayElementAtIndex(i); deleted++; };
+                        }
+                    }
 
                     EditorGUILayout.BeginVertical();
-                    var index = 0;
+
+                    var existTagNames = new HashSet<string>();
                     foreach (var tag in aseprite.tags)
                     {
+                        if (existTagNames.Contains(tag.name)) continue;
+                        existTagNames.Add(tag.name);
+
                         var rect = EditorGUILayout.GetControlRect(false);
                         var color = new Rect(rect);
                         var label = new Rect(rect);
@@ -98,8 +115,18 @@ namespace Negi0109.AsepriteImporter
 
                         GUI.Box(color, "", colorStyle);
                         EditorGUI.LabelField(label, $"{tag.from,2} - {tag.to,2} : {tag.name}");
-                        EditorGUILayout.PropertyField(tagSettings.GetArrayElementAtIndex(index));
-                        index++;
+                        if (dic.ContainsKey(tag.name))
+                        {
+                            var setting = dic[tag.name];
+                            EditorGUILayout.PropertyField(setting);
+                        }
+                        else
+                        {
+                            tagSettings.arraySize++;
+                            var setting = tagSettings.GetArrayElementAtIndex(tagSettings.arraySize - 1);
+                            setting.FindPropertyRelative("name").stringValue = tag.name;
+                            EditorGUILayout.PropertyField(setting);
+                        }
                     }
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.EndVertical();
