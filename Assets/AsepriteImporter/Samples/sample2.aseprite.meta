@@ -28,4 +28,5 @@ ScriptedImporter:
   exportAnimation: 1
   edging: 0
   baseSetting:
+    name: 
     loopTime: 0

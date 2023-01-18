@@ -14,9 +14,12 @@ ScriptedImporter:
   separatesX: []
   separatesY: []
   tagSettings:
-  - loopTime: 1
-  - loopTime: 0
-  - loopTime: 1
+  - name: front
+    loopTime: 1
+  - name: back
+    loopTime: 0
+  - name: right
+    loopTime: 0
   layerSettings:
   - name: Layer 1
     secondaryTexture: 0
@@ -25,4 +28,5 @@ ScriptedImporter:
   exportAnimation: 1
   edging: 1
   baseSetting:
+    name: 
     loopTime: 0

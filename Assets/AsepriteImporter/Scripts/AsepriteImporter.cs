@@ -45,6 +45,7 @@ namespace Negi0109.AsepriteImporter
         [Serializable]
         public class TagSetting
         {
+            public string name;
             public bool loopTime;
 
             [CustomPropertyDrawer(typeof(TagSetting))]
@@ -188,6 +189,35 @@ namespace Negi0109.AsepriteImporter
             {
                 tags = new Aseprite.Tag[] { new Aseprite.Tag() { name = "", from = 0, to = aseprite.header.frames - 1 } };
                 tagSettings = new TagSetting[] { baseSetting ?? new TagSetting() };
+                tagSettings[0].name = "";
+            }
+
+            {
+                var dic = new Dictionary<string, TagSetting>();
+                var tagCounts = new Dictionary<string, int>();
+                var tmpTagSettings = new TagSetting[tags.Length];
+
+                foreach (var tagSetting in tagSettings) {
+                    if (!dic.ContainsKey(tagSetting.name)) dic[tagSetting.name] = tagSetting;
+                }
+
+                int index = 0;
+                foreach (var tag in tags) {
+                    var tagName = tag.name;
+                    if (!tagCounts.ContainsKey(tagName)) tagCounts[tagName] = 0;
+                    if (tagCounts[tagName] != 0) tag.name = $"{tagName}{tagCounts[tagName]}";
+
+                    if (dic.TryGetValue(tagName, out TagSetting tagSetting)) {
+                        tmpTagSettings[index] = tagSetting;
+                    } else {
+                        tmpTagSettings[index] = new TagSetting(){ name = tagName };
+                    }
+
+                    tagCounts[tagName]++;
+                    index++;
+                }
+
+                tagSettings = tmpTagSettings;
             }
 
             var spriteSize = new Vector2Int(aseprite.header.size.x / separatesX.Length, aseprite.header.size.y / separatesY.Length);
@@ -224,6 +254,7 @@ namespace Negi0109.AsepriteImporter
                     for (int j = 0; j < tags.Length; j++)
                     {
                         var tag = tags[j];
+                        var tagSetting = tagSettings[j];
                         var frames = tag.to - tag.from + 1;
                         var sprites = new Sprite[frames];
 
@@ -264,7 +295,7 @@ namespace Negi0109.AsepriteImporter
                             if (!String.IsNullOrEmpty(tag.name)) sprite.name += $"-{tag.name}";
 
                             sprites[k] = sprite;
-                            ctx.AddObjectToAsset($"{x}-{y}-{j}-{k}", sprite);
+                            ctx.AddObjectToAsset($"{x}-{y}-{tag.name}-{k}", sprite);
                         }
 
                         if (exportAnimation)
@@ -293,7 +324,7 @@ namespace Negi0109.AsepriteImporter
                             var animationSetting = new AnimationClipSettings();
 
                             {
-                                animationSetting.loopTime = tagSettings[j].loopTime;
+                                animationSetting.loopTime = tagSetting.loopTime;
                             }
 
                             animationSetting.stopTime = time;
@@ -304,7 +335,7 @@ namespace Negi0109.AsepriteImporter
                             if (separateY) clip.name += $"-{separatesY[y].name}";
                             if (!String.IsNullOrEmpty(tag.name)) clip.name += $"-{tag.name}";
 
-                            ctx.AddObjectToAsset($"{x}-{y}-{j}", clip);
+                            ctx.AddObjectToAsset($"{x}-{y}-{tag.name}-{j}", clip);
                         }
                     }
                 }
