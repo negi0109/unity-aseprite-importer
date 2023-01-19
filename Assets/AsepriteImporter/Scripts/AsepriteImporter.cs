@@ -79,6 +79,7 @@ namespace Negi0109.AsepriteImporter
             public string secondaryTextureName;
         }
 
+
         // public Aseprite aseprite;
 
         public bool separateX;
@@ -91,6 +92,8 @@ namespace Negi0109.AsepriteImporter
         public TagSetting[] tagSettings;
         public LayerSetting[] layerSettings = new LayerSetting[0];
         public float pixelsPerUnit = 100f;
+
+        public Aseprite.FrameDirection frameDirection = Aseprite.FrameDirection.Vertical;
         public bool exportAnimation;
         public bool edging;
 
@@ -128,7 +131,8 @@ namespace Negi0109.AsepriteImporter
         {
             var bytes = File.ReadAllBytes(ctx.assetPath);
             var aseprite = Aseprite.Aseprite.Deserialize(bytes);
-            Texture2D texture = aseprite.GenerateTexture();
+            var frameDirection = this.frameDirection;
+            Texture2D texture;
             SecondarySpriteTexture[] secondaryTextures;
             var separatesX = this.separatesX;
             var separatesY = this.separatesY;
@@ -160,12 +164,12 @@ namespace Negi0109.AsepriteImporter
                     }
                 }
 
-                texture = aseprite.GenerateTexture(mainTexSet);
+                texture = aseprite.GenerateTexture(mainTexSet, frameDirection);
 
                 secondaryTextures = dic.Keys.Select(
                     key =>
                     {
-                        var tex = new SecondarySpriteTexture() { name = key, texture = aseprite.GenerateTexture(dic[key]) };
+                        var tex = new SecondarySpriteTexture() { name = key, texture = aseprite.GenerateTexture(dic[key], frameDirection) };
                         tex.texture.name = key;
                         return tex;
                     }
@@ -261,16 +265,23 @@ namespace Negi0109.AsepriteImporter
                         for (int k = 0; k < frames; k++)
                         {
                             var frame = aseprite.frames[tag.from + k];
+                            var pos =
+                                frameDirection == Aseprite.FrameDirection.Vertical ?
+                                    new Vector2Int(x, ((tag.from + k) * separatesY.Length + y)) :
+                                    new Vector2Int(((tag.from + k) * separatesX.Length + x), y);
+
+                            var rect  = edging ?
+                                new Rect(
+                                        (spriteSize.x + 1) * pos.x + 1,
+                                        (spriteSize.y + 1) * pos.y + 1,
+                                        spriteSize.x, spriteSize.y
+                                ) :
+                                new Rect(spriteSize.x * pos.x, spriteSize.y * pos.y, spriteSize.x, spriteSize.y);
 
 #if UNITY_2022_2_OR_NEWER
                             var sprite = Sprite.Create(
                                 texture,
-                                edging ?
-                                    new Rect(
-                                        (spriteSize.x + 1) * x + 1,
-                                        (spriteSize.y + 1) * ((tag.from + k) * separatesY.Length + y) + 1,
-                                        spriteSize.x, spriteSize.y) :
-                                    new Rect(spriteSize.x * x, spriteSize.y * ((tag.from + k) * separatesY.Length + y), spriteSize.x, spriteSize.y),
+                                rect,
                                 new Vector2(.5f, .5f),
                                 pixelsPerUnit, 0,
                                 SpriteMeshType.Tight, Vector4.zero,
@@ -279,12 +290,7 @@ namespace Negi0109.AsepriteImporter
 #else
                             var sprite = Sprite.Create(
                                 texture,
-                                edging ?
-                                    new Rect(
-                                        (spriteSize.x + 1) * x + 1,
-                                        (spriteSize.y + 1) * ((tag.from + k) * separatesY.Length + y) + 1,
-                                        spriteSize.x, spriteSize.y) :
-                                    new Rect(spriteSize.x * x, spriteSize.y * ((tag.from + k) * separatesY.Length + y), spriteSize.x, spriteSize.y),
+                                rect,
                                 new Vector2(.5f, .5f),
                                 pixelsPerUnit
                             );
