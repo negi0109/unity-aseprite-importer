@@ -270,7 +270,7 @@ namespace Negi0109.AsepriteImporter
                                         (spriteSize.x + 1) * x + 1,
                                         (spriteSize.y + 1) * ((tag.from + k) * separatesY.Length + y) + 1,
                                         spriteSize.x, spriteSize.y) :
-                                    new Rect(spriteSize.x * x, spriteSize.y * (tag.from + k), spriteSize.x, spriteSize.y),
+                                    new Rect(spriteSize.x * x, spriteSize.y * ((tag.from + k) * separatesY.Length + y), spriteSize.x, spriteSize.y),
                                 new Vector2(.5f, .5f),
                                 pixelsPerUnit, 0,
                                 SpriteMeshType.Tight, Vector4.zero,
@@ -284,7 +284,7 @@ namespace Negi0109.AsepriteImporter
                                         (spriteSize.x + 1) * x + 1,
                                         (spriteSize.y + 1) * ((tag.from + k) * separatesY.Length + y) + 1,
                                         spriteSize.x, spriteSize.y) :
-                                    new Rect(spriteSize.x * x, spriteSize.y * (tag.from + k), spriteSize.x, spriteSize.y),
+                                    new Rect(spriteSize.x * x, spriteSize.y * ((tag.from + k) * separatesY.Length + y), spriteSize.x, spriteSize.y),
                                 new Vector2(.5f, .5f),
                                 pixelsPerUnit
                             );
