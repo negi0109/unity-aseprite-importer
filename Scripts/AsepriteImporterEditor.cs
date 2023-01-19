@@ -28,7 +28,7 @@ namespace Negi0109.AsepriteImporter
             var importer = target as AssetImporter;
             var bytes = File.ReadAllBytes(importer.assetPath);
             aseprite = Aseprite.Aseprite.Deserialize(bytes);
-            texture = aseprite.GenerateTexture();
+            texture = aseprite.GenerateTexture(Aseprite.FrameDirection.Vertical);
             texture.filterMode = FilterMode.Point;
             var width = (float)PREVIEW_WIDTH / aseprite.header.size.x;
             previewScale = Mathf.Min(previewScale, width);
@@ -195,6 +195,12 @@ This Unity version only outputs as Texture2D.", MessageType.Info);
                 }
                 EditorGUILayout.EndVertical();
             }
+
+            EditorGUILayout.Separator();
+            EditorGUILayout.LabelField("Advanced", EditorStyles.boldLabel);
+
+            var frameDirection = serializedObject.FindProperty("frameDirection");
+            EditorGUILayout.PropertyField(frameDirection);
 
             EditorGUILayout.Separator();
 
