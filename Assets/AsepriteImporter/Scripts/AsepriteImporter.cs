@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Editor
 {
     [ScriptedImporter(0, new string[] { "aseprite", "ase" })]
     public class AsepriteImporter : ScriptedImporter
@@ -93,39 +93,11 @@ namespace Negi0109.AsepriteImporter
         public LayerSetting[] layerSettings = new LayerSetting[0];
         public float pixelsPerUnit = 100f;
 
-        public Aseprite.FrameDirection frameDirection = Aseprite.FrameDirection.Vertical;
+        public FrameDirection frameDirection = FrameDirection.Vertical;
         public bool exportAnimation;
         public bool edging;
 
         public TagSetting baseSetting;
-
-        public Texture2D EdgingTexture(Texture2D texture, Vector2Int spriteSize)
-        {
-            var sx = texture.width / spriteSize.x;
-            var sy = texture.height / spriteSize.y;
-
-            var tex = new Texture2D(sx * (spriteSize.x + 1) + 2, sy * (spriteSize.y + 1) + 2);
-            tex.filterMode = FilterMode.Point;
-
-            for (int x = 0; x < tex.width; x++)
-                for (int y = 0; y < tex.height; y++)
-                    tex.SetPixel(x, y, Color.clear);
-
-            for (int x = 0; x < sx; x++)
-                for (int y = 0; y < sy; y++)
-                    for (int dx = 0; dx < spriteSize.x; dx++)
-                        for (int dy = 0; dy < spriteSize.y; dy++)
-                            tex.SetPixel(
-                                x * (spriteSize.x + 1) + dx + 1,
-                                y * (spriteSize.y + 1) + dy + 1,
-                                texture.GetPixel(
-                                    x * spriteSize.x + dx,
-                                    y * spriteSize.y + dy
-                                )
-                            );
-
-            return tex;
-        }
 
         public override void OnImportAsset(AssetImportContext ctx)
         {
@@ -139,6 +111,22 @@ namespace Negi0109.AsepriteImporter
             var tagSettings = this.tagSettings;
             var tags = aseprite.tags.ToArray();
             var baseName = Path.GetFileNameWithoutExtension(ctx.assetPath);
+
+            if (!separateX || separatesX == null || separatesX.Length == 0)
+            {
+                separatesX = new Separate[]{
+                    new Separate(){ name = "0", invisible = false }
+                };
+            }
+            if (!separateY || separatesY == null || separatesY.Length == 0)
+            {
+                separatesY = new Separate[]{
+                    new Separate(){ name = "0", invisible = false }
+                };
+            }
+
+            var spriteSize = new Vector2Int(aseprite.header.size.x / separatesX.Length, aseprite.header.size.y / separatesY.Length);
+            var textureBuilder = new AsepriteTextureBuilder(aseprite, spriteSize, frameDirection, edging);
 
             // SecondaryTexture
             {
@@ -164,29 +152,16 @@ namespace Negi0109.AsepriteImporter
                     }
                 }
 
-                texture = aseprite.GenerateTexture(mainTexSet, frameDirection);
+                texture = textureBuilder.Build(mainTexSet);
 
                 secondaryTextures = dic.Keys.Select(
                     key =>
                     {
-                        var tex = new SecondarySpriteTexture() { name = key, texture = aseprite.GenerateTexture(dic[key], frameDirection) };
+                        var tex = new SecondarySpriteTexture() { name = key, texture = textureBuilder.Build(dic[key]) };
                         tex.texture.name = key;
                         return tex;
                     }
                 ).ToArray();
-            }
-
-            if (!separateX || separatesX == null || separatesX.Length == 0)
-            {
-                separatesX = new Separate[]{
-                    new Separate(){ name = "0", invisible = false }
-                };
-            }
-            if (!separateY || separatesY == null || separatesY.Length == 0)
-            {
-                separatesY = new Separate[]{
-                    new Separate(){ name = "0", invisible = false }
-                };
             }
 
             if (!separateTags || aseprite.tags == null || aseprite.tags.Count == 0)
@@ -224,18 +199,6 @@ namespace Negi0109.AsepriteImporter
                 tagSettings = tmpTagSettings;
             }
 
-            var spriteSize = new Vector2Int(aseprite.header.size.x / separatesX.Length, aseprite.header.size.y / separatesY.Length);
-
-            if (edging)
-            {
-                texture = EdgingTexture(texture, spriteSize);
-
-                for (int i = 0; i < secondaryTextures.Length; i++)
-                {
-                    secondaryTextures[i].texture = EdgingTexture(secondaryTextures[i].texture, spriteSize);
-                }
-            }
-
             texture.filterMode = FilterMode.Point;
 
             ctx.AddObjectToAsset("texture", texture);
@@ -266,7 +229,7 @@ namespace Negi0109.AsepriteImporter
                         {
                             var frame = aseprite.frames[tag.from + k];
                             var pos =
-                                frameDirection == Aseprite.FrameDirection.Vertical ?
+                                frameDirection == FrameDirection.Vertical ?
                                     new Vector2Int(x, ((tag.from + k) * separatesY.Length + y)) :
                                     new Vector2Int(((tag.from + k) * separatesX.Length + x), y);
 
