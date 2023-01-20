@@ -42,6 +42,7 @@ namespace Negi0109.AsepriteImporter.Editor
                 }
             }
         }
+
         [Serializable]
         public class TagSetting
         {
@@ -99,6 +100,18 @@ namespace Negi0109.AsepriteImporter.Editor
 
         public TagSetting baseSetting;
 
+        private class Slice {
+            public string id;
+            public string name;
+            public Rect rect;
+
+            public Slice(string id, string name, Rect rect) {
+                this.id = id;
+                this.name = name;
+                this.rect = rect;
+            }
+        }
+
         public override void OnImportAsset(AssetImportContext ctx)
         {
             var bytes = File.ReadAllBytes(ctx.assetPath);
@@ -128,7 +141,7 @@ namespace Negi0109.AsepriteImporter.Editor
             var spriteSize = new Vector2Int(aseprite.header.size.x / separatesX.Length, aseprite.header.size.y / separatesY.Length);
             var textureBuilder = new AsepriteTextureBuilder(aseprite, spriteSize, frameDirection, edging);
 
-            // SecondaryTexture
+            // Setup SecondaryTexture
             {
                 var layerSettingHash = layerSettings.ToDictionary(layerSetting => layerSetting.name);
 
@@ -199,8 +212,8 @@ namespace Negi0109.AsepriteImporter.Editor
                 tagSettings = tmpTagSettings;
             }
 
+            // SetAsset Textures
             texture.filterMode = FilterMode.Point;
-
             ctx.AddObjectToAsset("texture", texture);
             for (int i = 0; i < secondaryTextures.Length; i++)
             {
@@ -210,6 +223,8 @@ namespace Negi0109.AsepriteImporter.Editor
 
             ctx.SetMainObject(texture);
 
+            // Setup Slices
+            var slices = new List<Slice>();
             for (int x = 0; x < separatesX.Length; x++)
             {
                 if (separatesX[x].invisible) continue;
@@ -217,94 +232,96 @@ namespace Negi0109.AsepriteImporter.Editor
                 for (int y = 0; y < separatesY.Length; y++)
                 {
                     if (separatesY[y].invisible) continue;
+                    var rect = edging ?
+                        new Rect(
+                                (spriteSize.x + 1) * x + 1,
+                                (spriteSize.y + 1) * y + 1,
+                                spriteSize.x, spriteSize.y
+                        ) :
+                        new Rect(spriteSize.x * x, spriteSize.y * y, spriteSize.x, spriteSize.y);
+                    var name = "";
+                    if (separateX) name += $"-{separatesX[x].name}";
+                    if (separateY) name += $"-{separatesY[y].name}";
 
-                    for (int j = 0; j < tags.Length; j++)
+                    slices.Add(new Slice($"{x}-{y}-", name, rect));
+                }
+            }
+
+            foreach(var slice in slices) {
+                for (int j = 0; j < tags.Length; j++)
+                {
+                    var tag = tags[j];
+                    var tagSetting = tagSettings[j];
+                    var frames = tag.to - tag.from + 1;
+                    var sprites = new Sprite[frames];
+
+                    for (int k = 0; k < frames; k++)
                     {
-                        var tag = tags[j];
-                        var tagSetting = tagSettings[j];
-                        var frames = tag.to - tag.from + 1;
-                        var sprites = new Sprite[frames];
+                        var frame = aseprite.frames[tag.from + k];
+                        var frameRect = textureBuilder.GetFrameRect(tag.from + k);
+                        var rect = new Rect(frameRect.x + slice.rect.x, frameRect.y + slice.rect.y, slice.rect.width, slice.rect.height);
 
+#if UNITY_2022_2_OR_NEWER
+                        var sprite = Sprite.Create(
+                            texture,
+                            rect,
+                            new Vector2(.5f, .5f),
+                            pixelsPerUnit, 0,
+                            SpriteMeshType.Tight, Vector4.zero,
+                            false, secondaryTextures
+                        );
+#else
+                        var sprite = Sprite.Create(
+                            texture,
+                            rect,
+                            new Vector2(.5f, .5f),
+                            pixelsPerUnit
+                        );
+#endif
+
+                        sprite.name = baseName + slice.name;
+                        if (!String.IsNullOrEmpty(tag.name)) sprite.name += $"-{tag.name}";
+
+                        sprites[k] = sprite;
+                        ctx.AddObjectToAsset($"{slice.id}{tag.name}-{k}", sprite);
+                    }
+
+                    if (exportAnimation)
+                    {
+                        var clip = new AnimationClip();
+                        var curveBinding = new EditorCurveBinding();
+                        curveBinding.type = typeof(SpriteRenderer);
+                        curveBinding.path = "";
+                        curveBinding.propertyName = "m_Sprite";
+
+                        var keyframes = new ObjectReferenceKeyframe[frames + 1];
+
+                        var time = 0f;
                         for (int k = 0; k < frames; k++)
                         {
                             var frame = aseprite.frames[tag.from + k];
-                            var frameRect = textureBuilder.GetFrameRect(tag.from + k);
+                            keyframes[k].time = time;
+                            keyframes[k].value = sprites[k];
 
-                            var pos = new Vector2Int(x, y);
-
-                            var rect  = edging ?
-                                new Rect(
-                                        frameRect.x + (spriteSize.x + 1) * pos.x + 1,
-                                        frameRect.y + (spriteSize.y + 1) * pos.y + 1,
-                                        spriteSize.x, spriteSize.y
-                                ) :
-                                new Rect(frameRect.x + spriteSize.x * pos.x, frameRect.y + spriteSize.y * pos.y, spriteSize.x, spriteSize.y);
-
-#if UNITY_2022_2_OR_NEWER
-                            var sprite = Sprite.Create(
-                                texture,
-                                rect,
-                                new Vector2(.5f, .5f),
-                                pixelsPerUnit, 0,
-                                SpriteMeshType.Tight, Vector4.zero,
-                                false, secondaryTextures
-                            );
-#else
-                            var sprite = Sprite.Create(
-                                texture,
-                                rect,
-                                new Vector2(.5f, .5f),
-                                pixelsPerUnit
-                            );
-#endif
-                            sprite.name = baseName;
-                            if (separateX) sprite.name += $"-{separatesX[x].name}";
-                            if (separateY) sprite.name += $"-{separatesY[y].name}";
-                            if (!String.IsNullOrEmpty(tag.name)) sprite.name += $"-{tag.name}";
-
-                            sprites[k] = sprite;
-                            ctx.AddObjectToAsset($"{x}-{y}-{tag.name}-{k}", sprite);
+                            time += frame.duration;
                         }
+                        keyframes[frames].time = time;
+                        keyframes[frames].value = sprites[frames - 1];
 
-                        if (exportAnimation)
+                        AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
+                        var animationSetting = new AnimationClipSettings();
+
                         {
-                            var clip = new AnimationClip();
-                            var curveBinding = new EditorCurveBinding();
-                            curveBinding.type = typeof(SpriteRenderer);
-                            curveBinding.path = "";
-                            curveBinding.propertyName = "m_Sprite";
-
-                            var keyframes = new ObjectReferenceKeyframe[frames + 1];
-
-                            var time = 0f;
-                            for (int k = 0; k < frames; k++)
-                            {
-                                var frame = aseprite.frames[tag.from + k];
-                                keyframes[k].time = time;
-                                keyframes[k].value = sprites[k];
-
-                                time += frame.duration;
-                            }
-                            keyframes[frames].time = time;
-                            keyframes[frames].value = sprites[frames - 1];
-
-                            AnimationUtility.SetObjectReferenceCurve(clip, curveBinding, keyframes);
-                            var animationSetting = new AnimationClipSettings();
-
-                            {
-                                animationSetting.loopTime = tagSetting.loopTime;
-                            }
-
-                            animationSetting.stopTime = time;
-                            AnimationUtility.SetAnimationClipSettings(clip, animationSetting);
-
-                            clip.name = baseName;
-                            if (separateX) clip.name += $"-{separatesX[x].name}";
-                            if (separateY) clip.name += $"-{separatesY[y].name}";
-                            if (!String.IsNullOrEmpty(tag.name)) clip.name += $"-{tag.name}";
-
-                            ctx.AddObjectToAsset($"{x}-{y}-{tag.name}-{j}", clip);
+                            animationSetting.loopTime = tagSetting.loopTime;
                         }
+
+                        animationSetting.stopTime = time;
+                        AnimationUtility.SetAnimationClipSettings(clip, animationSetting);
+
+                        clip.name = baseName + slice.name;
+                        if (!String.IsNullOrEmpty(tag.name)) clip.name += $"-{tag.name}";
+
+                        ctx.AddObjectToAsset($"{slice.id}{tag.name}-{j}", clip);
                     }
                 }
             }
