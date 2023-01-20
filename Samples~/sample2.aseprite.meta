@@ -9,7 +9,7 @@ ScriptedImporter:
   assetBundleVariant: 
   script: {fileID: 11500000, guid: a0f874cacdbc64e658c23d680e0f097b, type: 3}
   separateX: 1
-  separateY: 0
+  separateY: 1
   separateTags: 0
   separatesX:
   - name: front
@@ -18,13 +18,21 @@ ScriptedImporter:
     invisible: 0
   - name: right
     invisible: 0
-  separatesY: []
+  separatesY:
+  - name: bot
+    invisible: 0
+  - name: top
+    invisible: 0
   tagSettings: []
   layerSettings:
   - name: Layer 1
     secondaryTexture: 0
     secondaryTextureName: 
+  - name: Layer 2
+    secondaryTexture: 0
+    secondaryTextureName: 
   pixelsPerUnit: 100
+  frameDirection: 1
   exportAnimation: 1
   edging: 0
   baseSetting:
