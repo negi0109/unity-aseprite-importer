@@ -228,18 +228,17 @@ namespace Negi0109.AsepriteImporter.Editor
                         for (int k = 0; k < frames; k++)
                         {
                             var frame = aseprite.frames[tag.from + k];
-                            var pos =
-                                frameDirection == FrameDirection.Vertical ?
-                                    new Vector2Int(x, ((tag.from + k) * separatesY.Length + y)) :
-                                    new Vector2Int(((tag.from + k) * separatesX.Length + x), y);
+                            var frameRect = textureBuilder.GetFrameRect(tag.from + k);
+
+                            var pos = new Vector2Int(x, y);
 
                             var rect  = edging ?
                                 new Rect(
-                                        (spriteSize.x + 1) * pos.x + 1,
-                                        (spriteSize.y + 1) * pos.y + 1,
+                                        frameRect.x + (spriteSize.x + 1) * pos.x + 1,
+                                        frameRect.y + (spriteSize.y + 1) * pos.y + 1,
                                         spriteSize.x, spriteSize.y
                                 ) :
-                                new Rect(spriteSize.x * pos.x, spriteSize.y * pos.y, spriteSize.x, spriteSize.y);
+                                new Rect(frameRect.x + spriteSize.x * pos.x, frameRect.y + spriteSize.y * pos.y, spriteSize.x, spriteSize.y);
 
 #if UNITY_2022_2_OR_NEWER
                             var sprite = Sprite.Create(

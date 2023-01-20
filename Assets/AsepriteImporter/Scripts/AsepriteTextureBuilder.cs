@@ -18,6 +18,27 @@ namespace Negi0109.AsepriteImporter.Editor
             _edging = edging;
         }
 
+        public Rect GetFrameRect(int frame) {
+            var textureSize = _aseprite.header.size;
+
+            if (_edging) {
+                var sx = textureSize.x / _spriteSize.x;
+                var sy = textureSize.y / _spriteSize.y;
+
+                return _frameDirection == FrameDirection.Vertical ? new Rect(
+                    0, (textureSize.y + sy) * frame, textureSize.x + sx, textureSize.y + sy
+                ) : new Rect(
+                    (textureSize.x + sx) * frame, 0, textureSize.x + sx, textureSize.y + sy
+                );
+            } else {
+                return _frameDirection == FrameDirection.Vertical ? new Rect(
+                    0, textureSize.y * frame, textureSize.x, textureSize.y
+                ) : new Rect(
+                    textureSize.x * frame, 0, textureSize.x, textureSize.y
+                );
+            }
+        }
+
         public Texture2D Build()
         {
             HashSet<int> activeLayers = new HashSet<int>(Enumerable.Range(0, _aseprite.layers.Count));
