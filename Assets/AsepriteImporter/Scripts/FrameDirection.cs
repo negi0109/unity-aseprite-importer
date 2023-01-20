@@ -1,4 +1,4 @@
-namespace Negi0109.AsepriteImporter.Aseprite
+namespace Negi0109.AsepriteImporter.Editor
 {
     public enum FrameDirection {
         Vertical, Horizontal
