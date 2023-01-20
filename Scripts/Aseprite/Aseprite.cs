@@ -42,46 +42,29 @@ namespace Negi0109.AsepriteImporter.Aseprite
             return aseprite;
         }
 
-        public Texture2D GenerateTexture(FrameDirection frameDirection)
+        public Texture2D GenerateTexture()
         {
             HashSet<int> activeLayers = new HashSet<int>(Enumerable.Range(0, layers.Count));
 
-            return GenerateTexture(activeLayers, frameDirection);
+            return GenerateTexture(activeLayers);
         }
 
-        public Texture2D GenerateTexture(HashSet<int> activeLayers, FrameDirection frameDirection)
+        public Texture2D GenerateTexture(HashSet<int> activeLayers)
         {
-            if (frameDirection == FrameDirection.Vertical) {
-                var tex = new Texture2D(header.size.x, header.size.y * header.frames);
+            var tex = new Texture2D(header.size.x, header.size.y * header.frames);
 
-                for (int x = 0; x < tex.width; x++)
-                    for (int y = 0; y < tex.height; y++)
-                        tex.SetPixel(x, y, Color.clear);
+            for (int x = 0; x < tex.width; x++)
+                for (int y = 0; y < tex.height; y++)
+                    tex.SetPixel(x, y, Color.clear);
 
-                for (int i = 0; i < header.frames; i++)
-                {
-                    frames[i].GenerateTexture(this, tex, new Vector2Int(0, i * header.size.y), activeLayers);
-                }
-
-                tex.Apply();
-
-                return tex;
-            } else {
-                var tex = new Texture2D(header.size.x * header.frames, header.size.y);
-
-                for (int x = 0; x < tex.width; x++)
-                    for (int y = 0; y < tex.height; y++)
-                        tex.SetPixel(x, y, Color.clear);
-
-                for (int i = 0; i < header.frames; i++)
-                {
-                    frames[i].GenerateTexture(this, tex, new Vector2Int(i * header.size.x, 0), activeLayers);
-                }
-
-                tex.Apply();
-
-                return tex;
+            for (int i = 0; i < header.frames; i++)
+            {
+                frames[i].GenerateTexture(this, tex, new Vector2Int(0, i * header.size.y), activeLayers);
             }
+
+            tex.Apply();
+
+            return tex;
         }
 
         public static void AsepriteFormatError() => throw new System.Exception("this file is not Aseprite format");

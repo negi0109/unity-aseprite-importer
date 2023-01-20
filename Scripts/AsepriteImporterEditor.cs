@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEditor.AssetImporters;
 using UnityEngine;
 
-namespace Negi0109.AsepriteImporter
+namespace Negi0109.AsepriteImporter.Editor
 {
     [CustomEditor(typeof(AsepriteImporter))]
     public class AsepriteImporterEditor : ScriptedImporterEditor
@@ -28,7 +28,7 @@ namespace Negi0109.AsepriteImporter
             var importer = target as AssetImporter;
             var bytes = File.ReadAllBytes(importer.assetPath);
             aseprite = Aseprite.Aseprite.Deserialize(bytes);
-            texture = aseprite.GenerateTexture(Aseprite.FrameDirection.Vertical);
+            texture = aseprite.GenerateTexture();
             texture.filterMode = FilterMode.Point;
             var width = (float)PREVIEW_WIDTH / aseprite.header.size.x;
             previewScale = Mathf.Min(previewScale, width);
