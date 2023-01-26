@@ -11,7 +11,7 @@ jobs:
     env:
       ROOT: Assets/AsepriteImporter
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: get package
         id: package
         run: |
@@ -51,12 +51,12 @@ jobs:
           TAG: release-${{ fromJson(steps.package.outputs.data).version }}
 
       - name: Create Release
-        uses: actions/create-release@v1
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: release-${{ fromJson(steps.package.outputs.data).version }}
-          release_name: v${{ fromJson(steps.package.outputs.data).version }}
+          name: v${{ fromJson(steps.package.outputs.data).version }}
           body: https://github.com/negi0109/unity-aseprite-importer.git#release-${{ fromJson(steps.package.outputs.data).version }}
           draft: false
           prerelease: false
