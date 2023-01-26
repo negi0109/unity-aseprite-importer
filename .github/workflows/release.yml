@@ -15,12 +15,12 @@ jobs:
       - name: get package
         id: package
         run: |
-          echo "::set-output name=data::$(cat ${{ env.ROOT }}/package.json | tr -d '\n')"
+          echo "data=$(cat ${{ env.ROOT }}/package.json | tr -d '\n')" >> $GITHUB_OUTPUT
 
       - name: get git commit
         id: commit
         run: |
-          echo "::set-output name=data::$(git log --pretty='%h %s' -1)"
+          echo "data=$(git log --pretty='%h %s' -1)" >> $GITHUB_OUTPUT
 
       - name: prepare release
         run: |
