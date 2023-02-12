@@ -1,5 +1,6 @@
 {
-    "name": "Scripts",
+    "name": "AsepriteImporter.Aseprite",
+    "rootNamespace": "",
     "references": [],
     "includePlatforms": [
         "Editor"
