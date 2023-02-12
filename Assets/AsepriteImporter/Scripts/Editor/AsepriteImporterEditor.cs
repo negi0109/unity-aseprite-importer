@@ -189,6 +189,7 @@ This Unity version only outputs as Texture2D.", MessageType.Info);
                             layerSettings.arraySize++;
                             var setting = layerSettings.GetArrayElementAtIndex(layerSettings.arraySize - 1);
                             setting.FindPropertyRelative("name").stringValue = layer.name;
+                            dic.Add(layer.name, setting);
                         }
                         EditorGUI.indentLevel--;
                     }
