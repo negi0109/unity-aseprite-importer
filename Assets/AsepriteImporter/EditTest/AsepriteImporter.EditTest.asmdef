@@ -1,9 +1,10 @@
 {
     "name": "EditTest",
+    "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Scripts"
+        "AsepriteImporter.Aseprite"
     ],
     "includePlatforms": [
         "Editor"
