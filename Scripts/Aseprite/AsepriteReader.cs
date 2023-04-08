@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 
 
 namespace Negi0109.AsepriteImporter.Aseprite
@@ -29,7 +30,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
         public int Short() => reader.ReadInt16();
         public uint Dword() => reader.ReadUInt32();
         public int Long() => reader.ReadInt32();
-        public string String() => new System.String(reader.ReadChars(Word()));
+        public string String() => new string(new UTF8Encoding().GetChars(reader.ReadBytes(Word())));
         public void Seek(long count) => reader.BaseStream.Seek(count, SeekOrigin.Current);
     }
 }
