@@ -56,5 +56,6 @@
     "cSpell.words": [
         "Aseprite",
         "Negi0109"
-    ]
+    ],
+    "dotnet.preferCSharpExtension": true
 }
