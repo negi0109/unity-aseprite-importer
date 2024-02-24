@@ -19,7 +19,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
             get => reader.BaseStream;
         }
 
-        private BinaryReader reader;
+        private readonly BinaryReader reader;
         public AsepriteReader(Stream stream)
         {
             reader = new BinaryReader(stream);

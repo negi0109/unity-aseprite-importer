@@ -100,12 +100,14 @@ namespace Negi0109.AsepriteImporter.Editor
 
         public TagSetting baseSetting;
 
-        private class Slice {
+        private class Slice
+        {
             public string id;
             public string name;
             public Rect rect;
 
-            public Slice(string id, string name, Rect rect) {
+            public Slice(string id, string name, Rect rect)
+            {
                 this.id = id;
                 this.name = name;
                 this.rect = rect;
@@ -189,20 +191,25 @@ namespace Negi0109.AsepriteImporter.Editor
                 var tagCounts = new Dictionary<string, int>();
                 var tmpTagSettings = new TagSetting[tags.Length];
 
-                foreach (var tagSetting in tagSettings) {
+                foreach (var tagSetting in tagSettings)
+                {
                     if (!dic.ContainsKey(tagSetting.name)) dic[tagSetting.name] = tagSetting;
                 }
 
                 int index = 0;
-                foreach (var tag in tags) {
+                foreach (var tag in tags)
+                {
                     var tagName = tag.name;
                     if (!tagCounts.ContainsKey(tagName)) tagCounts[tagName] = 0;
                     if (tagCounts[tagName] != 0) tag.name = $"{tagName}{tagCounts[tagName]}";
 
-                    if (dic.TryGetValue(tagName, out TagSetting tagSetting)) {
+                    if (dic.TryGetValue(tagName, out TagSetting tagSetting))
+                    {
                         tmpTagSettings[index] = tagSetting;
-                    } else {
-                        tmpTagSettings[index] = new TagSetting(){ name = tagName };
+                    }
+                    else
+                    {
+                        tmpTagSettings[index] = new TagSetting() { name = tagName };
                     }
 
                     tagCounts[tagName]++;
@@ -247,7 +254,8 @@ namespace Negi0109.AsepriteImporter.Editor
                 }
             }
 
-            foreach(var slice in slices) {
+            foreach (var slice in slices)
+            {
                 for (int j = 0; j < tags.Length; j++)
                 {
                     var tag = tags[j];
