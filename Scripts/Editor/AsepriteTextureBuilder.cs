@@ -5,23 +5,27 @@ using System.Linq;
 
 namespace Negi0109.AsepriteImporter.Editor
 {
-    public class AsepriteTextureBuilder {
-        private Aseprite.Aseprite _aseprite;
+    public class AsepriteTextureBuilder
+    {
+        private readonly Aseprite.Aseprite _aseprite;
         private Vector2Int _spriteSize;
-        private FrameDirection _frameDirection;
-        private bool _edging;
+        private readonly FrameDirection _frameDirection;
+        private readonly bool _edging;
 
-        public AsepriteTextureBuilder(Aseprite.Aseprite aseprite, Vector2Int spriteSize, FrameDirection frameDirection, bool edging) {
+        public AsepriteTextureBuilder(Aseprite.Aseprite aseprite, Vector2Int spriteSize, FrameDirection frameDirection, bool edging)
+        {
             _aseprite = aseprite;
             _spriteSize = spriteSize;
             _frameDirection = frameDirection;
             _edging = edging;
         }
 
-        public Rect GetFrameRect(int frame) {
+        public Rect GetFrameRect(int frame)
+        {
             var textureSize = _aseprite.header.size;
 
-            if (_edging) {
+            if (_edging)
+            {
                 var sx = textureSize.x / _spriteSize.x;
                 var sy = textureSize.y / _spriteSize.y;
 
@@ -30,7 +34,9 @@ namespace Negi0109.AsepriteImporter.Editor
                 ) : new Rect(
                     (textureSize.x + sx) * frame, 0, textureSize.x + sx, textureSize.y + sy
                 );
-            } else {
+            }
+            else
+            {
                 return _frameDirection == FrameDirection.Vertical ? new Rect(
                     0, textureSize.y * frame, textureSize.x, textureSize.y
                 ) : new Rect(
@@ -51,7 +57,8 @@ namespace Negi0109.AsepriteImporter.Editor
             var header = _aseprite.header;
             Texture2D tex;
 
-            if (_frameDirection == FrameDirection.Vertical) {
+            if (_frameDirection == FrameDirection.Vertical)
+            {
                 tex = new Texture2D(header.size.x, header.size.y * header.frames);
 
                 for (int x = 0; x < tex.width; x++)
@@ -64,7 +71,9 @@ namespace Negi0109.AsepriteImporter.Editor
                 }
 
                 tex.Apply();
-            } else {
+            }
+            else
+            {
                 tex = new Texture2D(header.size.x * header.frames, header.size.y);
 
                 for (int x = 0; x < tex.width; x++)
