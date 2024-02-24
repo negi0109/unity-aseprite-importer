@@ -11,6 +11,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
         public Vector2Int position;
         public float opacity;
         public int type;
+        public int zIndex;
         public Vector2Int size;
         public Pixel[,] pixels;
 
@@ -22,7 +23,8 @@ namespace Negi0109.AsepriteImporter.Aseprite
             cel.position.y = reader.Short();
             cel.opacity = reader.Byte() / 255f;
             cel.type = reader.Word();
-            reader.Seek(7);
+            cel.zIndex = reader.Short();
+            reader.Seek(5);
 
             if (cel.type == 0)
             {

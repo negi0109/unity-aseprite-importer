@@ -1,0 +1,39 @@
+fileFormatVersion: 2
+guid: 0099f72934978478ebf6c34cca986880
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: a0f874cacdbc64e658c23d680e0f097b, type: 3}
+  separateX: 0
+  separateY: 0
+  separateTags: 0
+  separatesX: []
+  separatesY: []
+  tagSettings: []
+  layerSettings:
+  - name: Layer 1
+    secondaryTexture: 0
+    secondaryTextureName: 
+  - name: Layer 2
+    secondaryTexture: 0
+    secondaryTextureName: 
+  - name: Layer 3
+    secondaryTexture: 0
+    secondaryTextureName: 
+  - name: Layer 4
+    secondaryTexture: 0
+    secondaryTextureName: 
+  - name: Group 5
+    secondaryTexture: 0
+    secondaryTextureName: 
+  pixelsPerUnit: 100
+  frameDirection: 0
+  exportAnimation: 1
+  edging: 0
+  baseSetting:
+    name: 
+    loopTime: 0

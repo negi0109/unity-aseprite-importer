@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.IO.Compression;
 using System.Linq;
 using UnityEngine;
 
@@ -106,9 +104,13 @@ namespace Negi0109.AsepriteImporter.Aseprite
 
         public void GenerateTexture(Aseprite aseprite, Texture2D tex, Vector2Int start, HashSet<int> activeLayers)
         {
-            foreach (var cel in cels)
+            var sortedCels = cels
+                            .Where(cel => activeLayers.Contains(cel.layer))
+                            .OrderBy(cel => cel.layer + cel.zIndex)
+                            .ThenBy(cel => cel.zIndex);
+
+            foreach (var cel in sortedCels)
             {
-                if (!activeLayers.Contains(cel.layer)) continue;
 
                 for (int x = 0; x < cel.size.x; x++)
                 {
