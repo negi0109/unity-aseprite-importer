@@ -17,6 +17,21 @@ jobs:
         run: |
           echo "data=$(cat ${{ env.ROOT }}/package.json | tr -d '\n')" >> $GITHUB_OUTPUT
 
+      - name: check tag
+        id: check_tag
+        run: git fetch origin "${{ env.TAG }}"
+        continue-on-error: true
+        env:
+          TAG: release-${{ fromJson(steps.package.outputs.data).version }}
+
+      - name: Exit if already exisists.
+        if: steps.check_tag.outcome == 'success'
+        run: |
+          echo "::notice:: Tag ${{ env.TAG }} is already exists."
+          exit 1
+        env:
+          TAG: release-${{ fromJson(steps.package.outputs.data).version }}
+
       - name: get git commit
         id: commit
         run: |
@@ -28,7 +43,6 @@ jobs:
           git checkout "${{ env.BRANCH }}"
           git mv Samples Samples~
           rm -f Samples.meta
-          # git push -f origin "${{ env.BRANCH }}"
         env:
           BRANCH: release-tmp
 
