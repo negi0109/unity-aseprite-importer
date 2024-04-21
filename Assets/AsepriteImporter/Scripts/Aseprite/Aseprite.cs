@@ -17,6 +17,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
         public Color[] palatte;
         public List<Layer> layers = new List<Layer>();
         public List<Tag> tags = new List<Tag>();
+        public List<Tileset> tilesets = new List<Tileset>();
 
         public static Aseprite Deserialize(byte[] bytes)
         {
@@ -66,6 +67,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
 
             return tex;
         }
+        public Tileset GetTileset(uint id) => tilesets.Find(v => v.id == id);
 
         public static void AsepriteFormatError() => throw new System.Exception("this file is not Aseprite format");
 

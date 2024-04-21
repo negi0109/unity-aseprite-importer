@@ -1,0 +1,24 @@
+fileFormatVersion: 2
+guid: 27929dcb7231f48c19359b76fb313b9a
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: a0f874cacdbc64e658c23d680e0f097b, type: 3}
+  separateX: 0
+  separateY: 0
+  separateTags: 0
+  separatesX: []
+  separatesY: []
+  tagSettings: []
+  layerSettings: []
+  pixelsPerUnit: 100
+  frameDirection: 0
+  exportAnimation: 0
+  edging: 0
+  baseSetting:
+    name: 
+    loopTime: 0

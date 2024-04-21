@@ -14,6 +14,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
             Cel = 0x2005,
             Tags = 0x2018,
             Palette = 0x2019,
+            Tileset = 0x2023,
         }
 
         public int magicNumber;
@@ -61,6 +62,10 @@ namespace Negi0109.AsepriteImporter.Aseprite
                         {
                             aseprite.tags.Add(Tag.Deserialize(reader, aseprite));
                         }
+                        break;
+                    case ChunkType.Tileset:
+                        var tileset = Tileset.Deserialize(reader, aseprite);
+                        aseprite.tilesets.Add(tileset);
                         break;
                     case ChunkType.Palette:
                         var size = reader.Dword();
@@ -114,7 +119,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
                 var layer = aseprite.layers[cel.layer];
                 if (layer.flags.HasFlag(Layer.Flag.Visible) == false) continue;
 
-                foreach (var value in cel.GetColors(aseprite))
+                foreach (var value in cel.GetColors(aseprite, layer))
                 {
                     var (celPos, celColor) = value;
 
