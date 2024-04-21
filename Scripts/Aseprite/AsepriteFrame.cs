@@ -14,6 +14,7 @@ namespace Negi0109.AsepriteImporter.Aseprite
             Cel = 0x2005,
             Tags = 0x2018,
             Palette = 0x2019,
+            Tileset = 0x2023,
         }
 
         public int magicNumber;
@@ -61,6 +62,10 @@ namespace Negi0109.AsepriteImporter.Aseprite
                         {
                             aseprite.tags.Add(Tag.Deserialize(reader, aseprite));
                         }
+                        break;
+                    case ChunkType.Tileset:
+                        var tileset = Tileset.Deserialize(reader, aseprite);
+                        aseprite.tilesets.Add(tileset);
                         break;
                     case ChunkType.Palette:
                         var size = reader.Dword();
@@ -111,28 +116,24 @@ namespace Negi0109.AsepriteImporter.Aseprite
 
             foreach (var cel in sortedCels)
             {
+                var layer = aseprite.layers[cel.layer];
+                if (layer.flags.HasFlag(Layer.Flag.Visible) == false) continue;
 
-                for (int x = 0; x < cel.size.x; x++)
+                foreach (var value in cel.GetColors(aseprite, layer))
                 {
-                    for (int y = 0; y < cel.size.y; y++)
+                    var (celPos, celColor) = value;
+
+                    var pos = cel.position + celPos;
+                    if (pos.x >= 0 && pos.x < aseprite.header.size.x
+                        && pos.y >= 0 && pos.y < aseprite.header.size.y)
                     {
-                        var celPos = new Vector2Int(x, y);
-                        var pos = cel.position + celPos;
-                        var layer = aseprite.layers[cel.layer];
-                        if (layer.flags.HasFlag(Layer.Flag.Visible) == false) continue;
+                        var color = Layer.blendFuncs[layer.blendMode](
+                                    celColor,
+                                    tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
+                                    cel.opacity * layer.opacity
+                                );
 
-                        if (pos.x >= 0 && pos.x < aseprite.header.size.x
-                            && pos.y >= 0 && pos.y < aseprite.header.size.y)
-                        {
-                            var pixel = cel.pixels[celPos.x, celPos.y];
-                            var color = Layer.blendFuncs[layer.blendMode](
-                                pixel.GetColor(aseprite),
-                                tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
-                                cel.opacity * layer.opacity
-                            );
-
-                            tex.SetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y, color);
-                        }
+                        tex.SetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y, color);
                     }
                 }
             }

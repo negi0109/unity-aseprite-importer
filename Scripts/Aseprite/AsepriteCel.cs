@@ -14,6 +14,9 @@ namespace Negi0109.AsepriteImporter.Aseprite
         public int zIndex;
         public Vector2Int size;
         public Pixel[,] pixels;
+        public int tileBitLength;
+        public uint tileBitmask;
+        public uint[,] tiles;
 
         public static AsepriteCel Deserialize(AsepriteReader reader, Aseprite aseprite)
         {
@@ -42,13 +45,75 @@ namespace Negi0109.AsepriteImporter.Aseprite
             {
                 cel.size.x = reader.Word();
                 cel.size.y = reader.Word();
-                reader.Seek(2);
+
+                reader.Seek(2); // zlib stream unnecessary parts
 
                 var stream = new DeflateStream(reader.BaseStream, CompressionMode.Decompress);
                 cel.pixels = cel.ToPixels(new AsepriteReader(stream), cel.size, aseprite);
             }
+            else if (cel.type == 3)
+            {
+                cel.size.x = reader.Word();
+                cel.size.y = reader.Word();
+                cel.tileBitLength = reader.Word(); // fixed 32-bit per tile
+
+                cel.tileBitmask = reader.Dword();
+                reader.Dword(); // unused, bitmask for x flip
+                reader.Dword(); // unused, bitmask for y flip
+                reader.Dword(); // unused, bitmask for d flip
+                reader.Seek(10);
+
+                reader.Seek(2); // zlib stream unnecessary parts
+                var stream = new DeflateStream(reader.BaseStream, CompressionMode.Decompress);
+                cel.tiles = cel.ToTiles(new AsepriteReader(stream), cel.size);
+            }
 
             return cel;
+        }
+
+        public IEnumerable<(Vector2Int, Color)> GetColors(Aseprite aseprite, Layer layer)
+        {
+            if (type == 0 || type == 2)
+            {
+                for (int x = 0; x < size.x; x++)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        var pixel = pixels[x, y];
+                        var color = pixel.GetColor(aseprite);
+
+                        yield return (new Vector2Int(x, y), color);
+                    }
+                }
+            }
+            else if (type == 3)
+            {
+                var tileset = aseprite.GetTileset(layer.tilesetIndex);
+
+                for (int x = 0; x < size.x; x++)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        var tilePos = new Vector2Int(x, y);
+                        foreach (var value in tileset.GetTileColors(aseprite, tiles[x, y]))
+                        {
+                            var (pos, color) = value;
+                            yield return (
+                                new Vector2Int(
+                                    pos.x + tilePos.x * tileset.size.x,
+                                    pos.y + tilePos.y * tileset.size.y
+                                ),
+                                color
+                            );
+                        }
+                    }
+                }
+                yield return (new Vector2Int(0, 0), Color.clear);
+            }
+            else
+            {
+                yield return (new Vector2Int(0, 0), Color.clear);
+            }
         }
 
         public Pixel[,] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
@@ -60,6 +125,17 @@ namespace Negi0109.AsepriteImporter.Aseprite
                     pixels[x, y] = Pixel.Deserialize(reader, aseprite);
 
             return pixels;
+        }
+
+        public uint[,] ToTiles(AsepriteReader reader, Vector2Int size)
+        {
+            var tiles = new uint[size.x, size.y];
+
+            for (int y = 0; y < size.y; y++)
+                for (int x = 0; x < size.x; x++)
+                    tiles[x, y] = reader.Dword();
+
+            return tiles;
         }
     }
 }
