@@ -111,28 +111,24 @@ namespace Negi0109.AsepriteImporter.Aseprite
 
             foreach (var cel in sortedCels)
             {
+                var layer = aseprite.layers[cel.layer];
+                if (layer.flags.HasFlag(Layer.Flag.Visible) == false) continue;
 
-                for (int x = 0; x < cel.size.x; x++)
+                foreach (var value in cel.GetColors(aseprite))
                 {
-                    for (int y = 0; y < cel.size.y; y++)
+                    var (celPos, celColor) = value;
+
+                    var pos = cel.position + celPos;
+                    if (pos.x >= 0 && pos.x < aseprite.header.size.x
+                        && pos.y >= 0 && pos.y < aseprite.header.size.y)
                     {
-                        var celPos = new Vector2Int(x, y);
-                        var pos = cel.position + celPos;
-                        var layer = aseprite.layers[cel.layer];
-                        if (layer.flags.HasFlag(Layer.Flag.Visible) == false) continue;
+                        var color = Layer.blendFuncs[layer.blendMode](
+                                    celColor,
+                                    tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
+                                    cel.opacity * layer.opacity
+                                );
 
-                        if (pos.x >= 0 && pos.x < aseprite.header.size.x
-                            && pos.y >= 0 && pos.y < aseprite.header.size.y)
-                        {
-                            var pixel = cel.pixels[celPos.x, celPos.y];
-                            var color = Layer.blendFuncs[layer.blendMode](
-                                pixel.GetColor(aseprite),
-                                tex.GetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y),
-                                cel.opacity * layer.opacity
-                            );
-
-                            tex.SetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y, color);
-                        }
+                        tex.SetPixel(start.x + pos.x, start.y + aseprite.header.size.y - 1 - pos.y, color);
                     }
                 }
             }

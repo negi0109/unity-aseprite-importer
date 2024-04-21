@@ -51,6 +51,28 @@ namespace Negi0109.AsepriteImporter.Aseprite
             return cel;
         }
 
+        public IEnumerable<(Vector2Int, Color)> GetColors(Aseprite aseprite)
+        {
+            if (type == 0 || type == 2)
+            {
+
+                for (int x = 0; x < size.x; x++)
+                {
+                    for (int y = 0; y < size.y; y++)
+                    {
+                        var pixel = pixels[x, y];
+                        var color = pixel.GetColor(aseprite);
+
+                        yield return (new Vector2Int(x, y), color);
+                    }
+                }
+            }
+            else
+            {
+                yield return (new Vector2Int(0, 0), Color.clear);
+            }
+        }
+
         public Pixel[,] ToPixels(AsepriteReader reader, Vector2Int size, Aseprite aseprite)
         {
             var pixels = new Pixel[size.x, size.y];
