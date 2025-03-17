@@ -88,7 +88,7 @@ namespace Negi0109.AsepriteImporter.Editor
                             var name = s.FindPropertyRelative("name").stringValue;
                             var exists = aseprite.tags.Exists(t => t.name.Equals(name));
                             if (exists) dic.Add(name, s);
-                            else { tagSettings.DeleteArrayElementAtIndex(i); deleted++; };
+                            else { tagSettings.DeleteArrayElementAtIndex(i); deleted++; }
                         }
                     }
 
@@ -159,7 +159,7 @@ This Unity version only outputs as Texture2D.", MessageType.Info);
                         var name = s.FindPropertyRelative("name").stringValue;
                         var exists = aseprite.layers.Exists(l => l.name.Equals(name));
                         if (exists) dic.Add(name, s);
-                        else { layerSettings.DeleteArrayElementAtIndex(i); deleted++; };
+                        else { layerSettings.DeleteArrayElementAtIndex(i); deleted++; }
                     }
                 }
 
